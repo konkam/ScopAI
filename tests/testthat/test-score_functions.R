@@ -1,5 +1,5 @@
 test_that("colours in a full deck", {
-  expect_equal(as.vector(GetColorsOfCards(ordered_deck)),
+  expect_equal(as.vector(GetColoursOfCards(ordered_deck)),
                rep(colours, each = 10))
 })
 test_that("values in a full deck", {
