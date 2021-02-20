@@ -12,6 +12,7 @@
 #' stack1
 #' stack2
 #' board
+#' turn counter
 #'
 #' @return
 #' @export
@@ -76,13 +77,12 @@ PlayCard = function(game_state, player, decision){
   }
   if(player==1){
     game_state$hand1 = game_state$hand1[game_state$hand1!=decision$play]
-    game_state$deck = game_state$deck[game_state$deck%in%decision$take]
     game_state$stack1 = c(game_state$stack1, decision$play, decision$take)
   }
   if(player==2){
     game_state$hand2 = game_state$hand2[game_state$hand2!=decision$play]
-    game_state$board = game_state$board[!game_state$board%in%decision$take]
     game_state$stack2 = c(game_state$stack2, decision$play, decision$take)
   }
+  game_state$board = game_state$board[!game_state$board%in%decision$take]
   return(game_state)
 }
