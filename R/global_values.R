@@ -7,11 +7,12 @@ colours_dict <- setNames(object = c("Spade", "Coppe", "Denari", "Bastoni"),
 values_dict <- setNames(object = 8:10,
                          nm = c("Fante", "Cavallo", "Re"))
 
-deck <- expand.grid(val = 1:10, col = colours, stringsAsFactors = F) %>%
+deck_dict <- expand.grid(val = 1:10, col = colours, stringsAsFactors = F) %>%
   (function(df) mapply(FUN = function(x,y) list(colour = x, value = y),
                        df$col, df$val, SIMPLIFY = F))
+names(deck_dict) <- paste0(rep(colours, each = 10), rep(1:10, 4))
 
-names(deck) <- paste0(rep(colours, each = 10), rep(1:10, 4))
+ordered_deck <- names(deck_dict)
 
-values_for_primiera <- setNames(object = c(16, 12, 13, 14, 15, 18, 21, 10, 10, 10),
-                                nm = 1:10)
+primiera_dict <- setNames(object = c(16, 12, 13, 14, 15, 18, 21, 10, 10, 10),
+                          nm = 1:10)
