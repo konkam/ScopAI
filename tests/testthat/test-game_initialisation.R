@@ -4,4 +4,7 @@ test_that("initialisation works", {
   expect_equal(game_state$hand1 %>% length(), 3)
   expect_equal(game_state$hand2 %>% length(), 3)
   expect_equal(game_state$board %>% length(), 4)
+  expect_equal(game_state$stack1 %>% length(), 0)
+  expect_equal(game_state$stack2 %>% length(), 0)
+  expect_equal(game_state$turn, 1)
 })
