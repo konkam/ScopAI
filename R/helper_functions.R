@@ -8,5 +8,5 @@
 #'
 #' @examples
 GiveFullColourName = function(letter) {
-  return(coloursdict[letter])
+  return(colours_dict[letter])
 }
