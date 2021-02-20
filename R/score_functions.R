@@ -1,11 +1,11 @@
 GetColorsOfCards <- function(cards) {
-  sapply(cards, "[[", 1)
+  sapply(deck_dict[cards], "[[", 1)
 }
 GetValuesOfCards <- function(cards) {
-  sapply(cards, "[[", 2)
+  sapply(deck_dict[cards], "[[", 2)
 }
 GetPrimieraValuesOfCards <- function(cards) {
-  values_for_primiera[GetValuesOfCards(cards)]
+  primiera_dict[GetValuesOfCards(cards)]
 }
 SubsetOneColourInCards <- function(cards, to_subset = "D") {
   cards[GetColorsOfCards(cards) == to_subset]
@@ -28,6 +28,7 @@ CountPrimiera <- function(cards) {
       max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "S"))),
       max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "C"))))
 }
+
 new_deck <- ShuffleNewDeck()
 toto <- new_deck[1:3]
 GetColorsOfCards(toto)
