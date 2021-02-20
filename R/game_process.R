@@ -5,14 +5,14 @@
 #' @param decisions2
 #' @param starting_player
 #'
-#' The game state is:
+#' The game state is a list with elements:
 #' deck (card to draw)
 #' hand1
 #' hand2
 #' stack1
 #' stack2
 #' board
-#' turn counter
+#' turn
 #'
 #' @return
 #' @export
