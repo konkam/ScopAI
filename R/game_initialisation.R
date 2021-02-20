@@ -7,5 +7,5 @@
 #'
 #' @examples
 ShuffleNewDeck <- function() {
-  sample(deck, size = length(deck), replace = F)
+  sample(ordered_deck, size = length(ordered_deck), replace = F)
 }
