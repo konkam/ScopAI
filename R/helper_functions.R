@@ -17,3 +17,7 @@ SwitchPlayer = function(player){
 GetPlayerName = function(player){
   return(ifelse(test = player==1, yes = "player1", no = "player2"))
 }
+
+GetPlayerHand = function(game_state, player){
+  game_state[GetPlayerName(player)]$hand
+}
