@@ -1,8 +1,8 @@
 test_that("Dealing cards executes correctly", {
   game_state = list(deck=ordered_deck, hand1 = list(), hand2 = list())
   g = DealPlayersCards(game_state, 1)
-  expect_equal(length(g$hand1), 3)
-  expect_equal(length(g$hand2), 3)
+  expect_equal(length(g$player1$hand), 3)
+  expect_equal(length(g$player2$hand), 3)
   expect_equal(length(g$deck), length(game_state$deck)-6)
   g2 = DealBoardCards(g)
   expect_equal(length(g2$board), 4)
@@ -12,13 +12,13 @@ test_that("Playing cards executes correctly", {
   game_state = list(deck=ordered_deck, hand1 = list(), hand2 = list())
   g = DealPlayersCards(game_state, 1) %>% DealBoardCards
   g2 = PlayCard(g, decision = list(play = "B2", take = c("B9", "B10")), player = 1)
-  expect_equal(length(g2$hand1), 2)
-  expect_equal(length(g2$hand2), 3)
+  expect_equal(length(g2$player1$hand), 2)
+  expect_equal(length(g2$player2$hand), 3)
   expect_equal(length(g2$board), length(g$board)-2)
   expect_equal(g2$last_taker,1)
   g2 = PlayCard(g, decision = list(play = "B2", take = NULL), player = 1)
-  expect_equal(length(g2$hand1), 2)
-  expect_equal(length(g2$hand2), 3)
+  expect_equal(length(g2$player1$hand), 2)
+  expect_equal(length(g2$player2$hand), 3)
   expect_equal(length(g2$board), length(g$board)+1)
 })
 test_that("Finishing game executes correctly", {

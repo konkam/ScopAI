@@ -24,7 +24,7 @@ RunGame = function(seed, decisions1, decisions2, starting_player){
   if(length(decisions2)!=18){
     stop("decision2 must contain 18 decisions")
   }
-  second_player
+  second_player = ifelse(starting_player==1, )
   game_state = InitialiseGameState()
  while (game_state$turn < 36){
     while(1==1){
@@ -46,12 +46,12 @@ DealPlayersCards = function(game_state, starting_player){
     stop(print("starting_player should be 1 or 2"))
   }
   if(starting_player==1){
-    game_state$hand1 = c(game_state$hand1, game_state$deck[1:3])
-    game_state$hand2 = c(game_state$hand2, game_state$deck[4:6])
+    game_state$player1$hand = c(game_state$player1$hand, game_state$deck[1:3])
+    game_state$player2$hand = c(game_state$player2$hand, game_state$deck[4:6])
   }
   else{
-    game_state$hand1 = c(game_state$hand1, game_state$deck[4:6])
-    game_state$hand2 = c(game_state$hand2, game_state$deck[1:3])
+    game_state$player1$hand = c(game_state$player1$hand, game_state$deck[4:6])
+    game_state$player2$hand = c(game_state$player2$hand, game_state$deck[1:3])
   }
   game_state$deck = game_state$deck[7:length(game_state$deck)]
   return(game_state)
@@ -73,9 +73,9 @@ PlayCard = function(game_state, player, decision){
     stop(print("starting_player should be 1 or 2"))
   }
   if(player==1){
-    game_state$hand1 = game_state$hand1[game_state$hand1!=decision$play]
+    game_state$player1$hand = game_state$player1$hand[game_state$player1$hand!=decision$play]
     if(length(decision$take>0)){
-      game_state$stack1 = c(game_state$stack1, decision$play, decision$take)
+      game_state$player1$stack = c(game_state$player1$stack, decision$play, decision$take)
       game_state$board = game_state$board[!game_state$board%in%decision$take]
       game_state$last_taker=1
     }
@@ -84,9 +84,9 @@ PlayCard = function(game_state, player, decision){
     }
   }
   else if(player==2){
-    game_state$hand2 = game_state$hand2[game_state$hand2!=decision$play]
+    game_state$player2$hand = game_state$player2$hand[game_state$player2$hand!=decision$play]
     if(length(decision$take>0)){
-      game_state$stack2 = c(game_state$stack2, decision$play, decision$take)
+      game_state$player2$stack = c(game_state$player2$stack, decision$play, decision$take)
       game_state$board = game_state$board[!game_state$board%in%decision$take]
       game_state$last_taker=2
     }
@@ -100,10 +100,10 @@ PlayCard = function(game_state, player, decision){
 
 FinishGame = function(game_state){
   if(game_state$last_taker==1){
-    game_state$stack1 = c(game_state$stack1, game_state$board)
+    game_state$player1$stack = c(game_state$player1$stack, game_state$board)
   }
   else if(game_state$last_taker==2){
-    game_state$stack2 = c(game_state$stack2, game_state$board)
+    game_state$player2$stack = c(game_state$player2$stack, game_state$board)
   }
   else{
     stop(print("game_state$last_taker should be 1 or 2"))
