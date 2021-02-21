@@ -49,6 +49,15 @@ AllSubsetsFast <- function(set) {
   apply(do.call(cbind, bin), 1L, function(x) { set[x] } )
 }
 
+TakeableCardsOnBoardBruteForce = function(card, board){
+  board_subsets = AllSubsets(board)
+  val = GetValueOfCard(card)
+  subsets_sum_value = board_subsets %>% sapply(GetSumValuesOfCards)
+  allowed_subsets_mask = subsets_sum_value==val
+  return(board_subsets[allowed_subsets_mask])
+}
+
+
 LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
   one_card_value <- GetValuesOfCards(one_card)
   board_with_values <- setNames(object = GetValuesOfCards(board),
@@ -65,7 +74,4 @@ LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
   }
   return(take_opportunities)
 }
-
-
-
 
