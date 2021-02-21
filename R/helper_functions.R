@@ -22,11 +22,31 @@ GetPlayerHand = function(game_state, player){
   game_state[[GetPlayerName(player)]]$hand
 }
 
-AllParts = function(cards){
+AllSubsets = function(cards){
   cards %>%
     (function(cards) lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
     purrr::flatten() %>%
     c(list(c()))
+}
+
+
+#' Title
+#' Found on http://rsnippets.blogspot.com/2012/04/generating-all-subsets-of-set.html
+#' @param set
+#'
+#' @return
+#' @export
+#'
+#' @examples
+AllSubsetsFast <- function(set) {
+  n <- length(set)
+  bin <- vector(mode = "list", length = n)
+  for (i in 1L:n) {
+    bin[[i]] <- rep.int(c(rep.int(F, 2L ^ (i - 1L)),
+                          rep.int(T, 2L ^ (i - 1L))),
+                        2L ^ (n - i))
+  }
+  apply(do.call(cbind, bin), 1L, function(x) { set[x] } )
 }
 
 LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {

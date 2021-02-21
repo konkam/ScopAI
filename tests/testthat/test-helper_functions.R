@@ -11,6 +11,6 @@ test_that("get the right hand", {
 test_that("Combination functions work",{
   for(n in 1:4){
     cards = sample(ordered_deck, size = n)
-    expect_equal(AllParts(cards) %>% length, 2^n)
+    expect_equal(AllSubsets(cards) %>% length, 2^n)
   }
 })
