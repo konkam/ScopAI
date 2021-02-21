@@ -22,6 +22,13 @@ GetPlayerHand = function(game_state, player){
   game_state[[GetPlayerName(player)]]$hand
 }
 
+AllParts = function(cards){
+  cards %>%
+    (function(cards) lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
+    purrr::flatten() %>%
+    c(list(c()))
+}
+
 LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
   one_card_value <- GetValuesOfCards(one_card)
   board_with_values <- setNames(object = GetValuesOfCards(board),
