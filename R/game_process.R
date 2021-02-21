@@ -17,23 +17,20 @@
 #'
 #' @return
 #'
-RunGame = function(seed, decisions1, decisions2, starting_player){
-  if(length(decisions1)!=18){
-    stop("decision1 must contain 18 decisions")
-  }
-  if(length(decisions2)!=18){
-    stop("decision2 must contain 18 decisions")
-  }
-  decisions = list(decisions1, decisions2)
+RunGame = function(seed, starting_player, DecisionFunction){
   game_state = InitialiseGameState()
   current_player = starting_player
  while (game_state$turn < 36){
 
     while(length(game_state[GetPlayerName(current_player)]["hand"])>0){
-      game_state = PlayCard(game_state = game_state, player = current_player, decision = decisions[[current_player]][turn])
+      game_state = PlayCard(game_state = game_state, player = current_player, decision = DecisionFunction(game_state, current_player))
       current_player = SwitchPlayer(current_player)
+      game_state$turn = game_state$turn + 1
     }
+   game_state = DealPlayersCards(game_state = game_state, starting_player = starting_player)
  }
+  game_state = FinishGame(game_state = game_state)
+  return(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1), score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2))
 }
 
 #' Title
