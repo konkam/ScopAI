@@ -12,7 +12,7 @@ GiveFullColourName = function(letter) {
 }
 
 SwitchPlayer = function(player){
-  return(ifelse(test = player==1, yes = 1, no = 2))
+  return(ifelse(test = player==1, yes = 2, no = 1))
 }
 GetPlayerName = function(player){
   return(ifelse(test = player==1, yes = "player1", no = "player2"))
