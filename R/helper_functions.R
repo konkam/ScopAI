@@ -37,7 +37,7 @@ AllSubsets = function(cards){
 
 
 #' Title
-#' Found on http://rsnippets.blogspot.com/2012/04/generating-all-subsets-of-set.html
+#' Found on http://rsnippets.blogspot.com/2012/04/generating-all-subsets-of-set.html, credits to Bogumił Kamiński
 #' @param set
 #'
 #' @return
