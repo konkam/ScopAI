@@ -117,101 +117,76 @@ CountPrimiera <- function(cards) {
 }
 
 # compute scores ------
-#' Give Denari Score For Player 1
+#' Give Denari Score For A Player
 #' Who has the most Denari?
-#' @param stack1
-#' @param stack2
+#' @param stack_player
+#' @param stack_other
 #'
 #' @return
 #'
 #' @examples
-GiveDenariScoreForPlayer1 <- function(stack1, stack2) {
-  if (CountDenariNumber(stack1) > CountDenariNumber(stack2)) return(1)
+GiveDenariScoreForAPlayer <- function(stack_player, stack_other) {
+  if (CountDenariNumber(stack_player) > CountDenariNumber(stack_other)) return(1)
   return(0)
 }
 
-#' Give Denari Score For Player 2
-#' Who has the most Denari?
-#' @param stack1
-#' @param stack2
-#'
-#' @return
-#'
-#' @examples
-GiveDenariScoreForPlayer2 <- function(stack1, stack2) {
-  GiveDenariScoreForPlayer1(stack2, stack1)
-}
 
-#' Give Cards Score For Player 1
+#' Give Cards Score For A Player
 #' Who has the most cards?
-#' @param stack1
-#' @param stack2
+#' @param stack_player
+#' @param stack_other
 #'
 #' @return
 #'
 #' @examples
-GiveCardsScoreForPlayer1 <- function(stack1, stack2) {
-  if (CountCardsNumber(stack1) > CountCardsNumber(stack2)) return(1)
+GiveCardsScoreForAPlayer <- function(stack_player, stack_other) {
+  if (CountCardsNumber(stack_player) > CountCardsNumber(stack_other)) return(1)
   return(0)
 }
 
-#' Give Cards Score For Player 2
-#' Who has the most cards?
-#' @param stack1
-#' @param stack2
-#'
-#' @return
-#'
-#' @examples
-GiveCardsScoreForPlayer2 <- function(stack1, stack2) {
-  GiveCardsScoreForPlayer1(stack2, stack1)
-}
-
-#' Give Primiera Score For Player 1
+#' Give Primiera Score For A Player
 #' Who has the best Primiera?
-#' @param stack1
-#' @param stack2
+#' @param stack_player
+#' @param stack_other
 #'
 #' @return
 #'
 #' @examples
-GivePrimieraScoreForPlayer1 <- function(stack1, stack2) {
-  if (CountPrimiera(stack1) > CountPrimiera(stack2)) return(1)
+GivePrimieraScoreForAPlayer <- function(stack_player, stack_other) {
+  if (CountPrimiera(stack_player) > CountPrimiera(stack_other)) return(1)
   return(0)
 }
 
-#' Give Primiera Score For Player 2
-#' Who has the best Primiera?
-#' @param stack1
-#' @param stack2
-#'
-#' @return
-#'
-#' @examples
-GivePrimieraScoreForPlayer2 <- function(stack1, stack2) {
-  GivePrimieraScoreForPlayer1(stack2, stack1)
-}
-
-#' Give Sette Bello Score For Player 1
+#' Give Sette Bello Score For A Player
 #' Who has the sette bello (7 of Dinero)?
-#' @param stack1
+#' @param stack_player
 #'
 #' @return
 #'
 #' @examples
-GiveSetteBelloScoreForPlayer1 <- function(stack1) {
-  if ("D7" %in% stack1) return(1)
+GiveSetteBelloScoreForAPlayer <- function(stack_player) {
+  if ("D7" %in% stack_player) return(1)
   return(0)
 }
 
-#' Give Sette Bello Score For Player 2
-#' Who has the sette bello (7 of Dinero)?
-#' @param stack1
+#' Give Score From State For A Player
+#' For a given game state, compute the score for a player
+#' @param game_state
+#' @param player
 #'
 #' @return
 #'
 #' @examples
-GiveSetteBelloScoreForPlayer2 <- function(stack2) {
-  if ("D7" %in% stack2) return(1)
-  return(0)
+GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
+  other_player <- player %% 2 + 1
+  player_data <- game_state[[GetPlayerName(player)]]
+  other_data <- game_state[[GetPlayerName(other_player)]]
+  sum(player_data$scope,
+      GiveSetteBelloScoreForAPlayer(player_data$hand),
+      GivePrimieraScoreForAPlayer(player_data$hand, other_data$hand),
+      GiveCardsScoreForAPlayer(player_data$hand, other_data$hand),
+      GiveDenariScoreForAPlayer(player_data$hand, other_data$hand))
 }
+
+
+
