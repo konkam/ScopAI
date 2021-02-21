@@ -87,12 +87,12 @@ PlayCard = function(game_state, player, decision){
       game_state$board = c(game_state$board, decision$play)
     }
   }
-  if(player==2){
+  else if(player==2){
     game_state$hand2 = game_state$hand2[game_state$hand2!=decision$play]
     if(length(decision$take>0)){
       game_state$stack2 = c(game_state$stack2, decision$play, decision$take)
       game_state$board = game_state$board[!game_state$board%in%decision$take]
-      game_state$last_taker=1
+      game_state$last_taker=2
     }
     else{
       game_state$board = c(game_state$board, decision$play)
@@ -103,5 +103,24 @@ PlayCard = function(game_state, player, decision){
 }
 
 FinishGame = function(game_state){
+  if(game_state$last_taker==1){
+    game_state$stack1 = c(game_state$stack1, game_state$board)
+  }
+  else if(game_state$last_taker==2){
+    game_state$stack2 = c(game_state$stack2, game_state$board)
+  }
+  else{
+    stop(print("game_state$last_taker should be 1 or 2"))
+  }
+  game_state$board = NULL
+  return(game_state)
+}
 
+CheckAtFinish = function(game_state){
+  if(game_state$turn != 36){
+    stop("Trying to finish the game too early")
+  }
+  if(length(game_state$deck)!=0){
+    stop("Trying to finish but the deck is not empty")
+  }
 }
