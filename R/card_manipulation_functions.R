@@ -21,7 +21,7 @@ GetColoursOfCards <- function(cards) {
 #' @examples
 #' GetValuesOfCards(c("D7", "C8"))
 GetValuesOfCards <- function(cards) {
-  sapply(deck_dict[cards], "[[", 2) #Maybe faster
+  sapply(deck_dict[cards], "[[", 2) # Maybe faster
   # sapply(X = cards, GetValueOfCard)
 }
 
@@ -29,11 +29,11 @@ GetValueOfCard <- function(card) {
   deck_dict[[card]][["value"]]
 }
 
-GetSumValuesOfCards = function(cards){
-  if(length(cards)==0)
+GetSumValuesOfCards <- function(cards) {
+  if (length(cards) == 0) {
     return(0)
-  else{
-    return(GetValuesOfCards(cards) %>% sum)
+  } else {
+    return(GetValuesOfCards(cards) %>% sum())
   }
 }
 
@@ -61,4 +61,3 @@ SubsetOneColourInCards <- function(cards, to_subset = "D") {
 SubsetOneValueInCards <- function(cards, to_subset = 7) {
   cards[GetValuesOfCards(cards) == to_subset]
 }
-

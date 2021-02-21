@@ -7,7 +7,9 @@
 #' @examples
 #' GetPrimieraValuesOfCards(c("D7", "C8"))
 GetPrimieraValuesOfCards <- function(cards) {
-  if (length(cards) == 0) return(0)
+  if (length(cards) == 0) {
+    return(0)
+  }
   primiera_dict[GetValuesOfCards(cards)]
 }
 
@@ -57,12 +59,14 @@ CountSevenNumber <- function(cards) {
 #' @return
 #'
 #' @examples
-#' CountPrimiera(c("D7", "C8", "S1", "B2", "D1))
+#' CountPrimiera(c("D7", "C8", "S1", "B2", "D1"))
 CountPrimiera <- function(cards) {
-  sum(max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "D"))),
-      max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "B"))),
-      max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "S"))),
-      max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "C"))))
+  sum(
+    max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "D"))),
+    max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "B"))),
+    max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "S"))),
+    max(GetPrimieraValuesOfCards(SubsetOneColourInCards(cards, "C")))
+  )
 }
 
 # compute scores ------
@@ -75,7 +79,9 @@ CountPrimiera <- function(cards) {
 #'
 #' @examples
 GiveDenariScoreForAPlayer <- function(stack_player, stack_other) {
-  if (CountDenariNumber(stack_player) > CountDenariNumber(stack_other)) return(1)
+  if (CountDenariNumber(stack_player) > CountDenariNumber(stack_other)) {
+    return(1)
+  }
   return(0)
 }
 
@@ -89,7 +95,9 @@ GiveDenariScoreForAPlayer <- function(stack_player, stack_other) {
 #'
 #' @examples
 GiveCardsScoreForAPlayer <- function(stack_player, stack_other) {
-  if (CountCardsNumber(stack_player) > CountCardsNumber(stack_other)) return(1)
+  if (CountCardsNumber(stack_player) > CountCardsNumber(stack_other)) {
+    return(1)
+  }
   return(0)
 }
 
@@ -102,7 +110,9 @@ GiveCardsScoreForAPlayer <- function(stack_player, stack_other) {
 #'
 #' @examples
 GivePrimieraScoreForAPlayer <- function(stack_player, stack_other) {
-  if (CountPrimiera(stack_player) > CountPrimiera(stack_other)) return(1)
+  if (CountPrimiera(stack_player) > CountPrimiera(stack_other)) {
+    return(1)
+  }
   return(0)
 }
 
@@ -114,7 +124,9 @@ GivePrimieraScoreForAPlayer <- function(stack_player, stack_other) {
 #'
 #' @examples
 GiveSetteBelloScoreForAPlayer <- function(stack_player) {
-  if ("D7" %in% stack_player) return(1)
+  if ("D7" %in% stack_player) {
+    return(1)
+  }
   return(0)
 }
 
@@ -130,12 +142,11 @@ GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
   other_player <- player %% 2 + 1
   player_data <- game_state[[GetPlayerName(player)]]
   other_data <- game_state[[GetPlayerName(other_player)]]
-  sum(player_data$scope,
-      GiveSetteBelloScoreForAPlayer(player_data$hand),
-      GivePrimieraScoreForAPlayer(player_data$hand, other_data$hand),
-      GiveCardsScoreForAPlayer(player_data$hand, other_data$hand),
-      GiveDenariScoreForAPlayer(player_data$hand, other_data$hand))
+  sum(
+    player_data$scope,
+    GiveSetteBelloScoreForAPlayer(player_data$hand),
+    GivePrimieraScoreForAPlayer(player_data$hand, other_data$hand),
+    GiveCardsScoreForAPlayer(player_data$hand, other_data$hand),
+    GiveDenariScoreForAPlayer(player_data$hand, other_data$hand)
+  )
 }
-
-
-
