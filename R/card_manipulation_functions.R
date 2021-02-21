@@ -7,7 +7,7 @@
 #' @return
 #'
 #' @examples
-#' GetColoursOfCards(c("D7", "C8"))
+#' ScopAI:::GetColoursOfCards(c("D7", "C8"))
 GetColoursOfCards <- function(cards) {
   sapply(deck_dict[cards], "[[", 1)
 }
@@ -19,7 +19,7 @@ GetColoursOfCards <- function(cards) {
 #' @return
 #'
 #' @examples
-#' GetValuesOfCards(c("D7", "C8"))
+#' ScopAI:::GetValuesOfCards(c("D7", "C8"))
 GetValuesOfCards <- function(cards) {
   sapply(deck_dict[cards], "[[", 2) # Maybe faster
   # sapply(X = cards, GetValueOfCard)
@@ -45,7 +45,7 @@ GetSumValuesOfCards <- function(cards) {
 #' @return
 #'
 #' @examples
-#' SubsetOneColourInCards(c("D7", "C8"), to_subset = "C")
+#' ScopAI:::SubsetOneColourInCards(c("D7", "C8"), to_subset = "C")
 SubsetOneColourInCards <- function(cards, to_subset = "D") {
   cards[GetColoursOfCards(cards) == to_subset]
 }
@@ -57,7 +57,7 @@ SubsetOneColourInCards <- function(cards, to_subset = "D") {
 #' @return
 #'
 #' @examples
-#' SubsetOneValueInCards(c("D7", "C8"), to_subset = 8)
+#' ScopAI:::SubsetOneValueInCards(c("D7", "C8"), to_subset = 8)
 SubsetOneValueInCards <- function(cards, to_subset = 7) {
   cards[GetValuesOfCards(cards) == to_subset]
 }

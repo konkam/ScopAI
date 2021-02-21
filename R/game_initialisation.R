@@ -13,11 +13,10 @@ ShuffleNewDeck <- function(seed = NULL) {
 
 #' Title
 #'
-#' @param game_state
+#' @param game_state A list containing the game state at this turn
 #'
 #' @return
 #'
-#' @examples
 DealBoardCards <- function(game_state) {
   game_state$board <- game_state$deck[1:4]
   game_state$deck <- game_state$deck[5:length(game_state$deck)]
@@ -26,12 +25,11 @@ DealBoardCards <- function(game_state) {
 
 #' Title
 #'
-#' @param seed
-#' @param starting_player
+#' @param seed Starting seed
+#' @param starting_player 1 or 2 according to which player starts
 #'
 #' @return
 #'
-#' @examples
 InitialiseGameState <- function(seed = NULL, starting_player = 1) {
   game_state <- list(
     deck = ShuffleNewDeck(seed),

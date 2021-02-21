@@ -1,9 +1,9 @@
 #' Title
 #'
-#' @param starting_deck
-#' @param decisions1
-#' @param decisions2
-#' @param starting_player
+#' @param starting_player 1 or 2 according to which player starts
+#' @param DecisionFunction A function DecisionFunction(game_state, current_player) which returns a list (play = card_played, take = cards_taken)
+#'
+#' In the future, DecisionFunction(game_state, current_player) may be modified to take history into account as DecisionFunction(game_states, current_player)
 #'
 #' The game state is a list with elements:
 #' deck (card to draw)
@@ -40,11 +40,10 @@ RunGame <- function(starting_player, DecisionFunction, seed = 1) {
 
 #' Title
 #'
-#' @param game_state
-#' @param starting_player
+#' @param game_state A list containing the game state at this turn
+#' @param starting_player 1 or 2 according to which player starts
 #'
 #' @return
-#' @export
 #'
 DealPlayersCards <- function(game_state, starting_player) {
   if (starting_player != 1 && starting_player != 2) {
@@ -70,15 +69,14 @@ DealPlayersCards <- function(game_state, starting_player) {
 
 #' Title
 #'
-#' @param game_state
-#' @param player
-#' @param decision
+#' @param game_state A list containing the game state at this turn
+#' @param player 1 or 2 according to which player plays
+#' @param decision A list (play = card_played, take = cards_taken)
 #'
 #' A decision is a list(play = card played, a single card, take = cards taken.)
 #'
 #' @return
 #'
-#' @examples
 PlayCard <- function(game_state, player, decision) {
   if (player != 1 && player != 2) {
     stop(print("starting_player should be 1 or 2"))

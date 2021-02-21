@@ -1,12 +1,10 @@
 
 #' Title
 #'
-#' @param letter
+#' @param letter First letter of the colour
 #'
 #' @return
-#' @export
 #'
-#' @examples
 GiveFullColourName <- function(letter) {
   return(colours_dict[letter])
 }
@@ -22,29 +20,25 @@ GetPlayerHand <- function(game_state, player) {
   game_state[[GetPlayerName(player)]]$hand
 }
 
-AllSubsets <- function(cards) {
+AllSubsetsWithCombn <- function(cards) {
   if (length(cards) == 0) {
-    return(list(NULL))
+    return(return(character(0)))
   }
   else {
-    cards %>%
-      (function(cards) lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
-      purrr::flatten() %>%
-      c(list(c()))
+      purrr::flatten(lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
+      c(list(character(0)))
   }
 }
 
 
 #' Title
 #' Found on http://rsnippets.blogspot.com/2012/04/generating-all-subsets-of-set.html, credits to Bogumił Kamiński
-#' @param set
+#' @param set A vector from which to generate all subsets
 #'
-#' @return
-#' @export
 #'
-#' @examples
-AllSubsetsFast <- function(set) {
+AllSubsetsWithGenerator <- function(set) {
   n <- length(set)
+  if(n==0) return(character(0))
   bin <- vector(mode = "list", length = n)
   for (i in 1L:n) {
     bin[[i]] <- rep.int(
@@ -59,6 +53,28 @@ AllSubsetsFast <- function(set) {
     set[x]
   })
 }
+
+#' Computes all subsets of cards from a list of cards
+#'
+#' Switches between the two functions according to the number of cards, as benchmarking with inputs such as c("B1", "B2", "B3", "B4", "B5", "B6", "B9", "B10", "B11") showed that speed differs among the two methods
+#'
+#' @param cards A vector of cards from which to generate all subsets
+#'
+#'
+AllSubsets = function(cards){
+  n = length(cards)
+  if (n == 0) {
+    return(character(0))
+  }
+  else if(n<=6){
+    return(AllSubsetsWithGenerator(cards))
+  }
+  else{
+    return(AllSubsetsWithCombn(cards))
+  }
+
+}
+
 
 TakeableCardsOnBoardBruteForce <- function(card, board) {
   val <- GetValueOfCard(card)
