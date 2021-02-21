@@ -19,7 +19,7 @@ GetPlayerName = function(player){
 }
 
 GetPlayerHand = function(game_state, player){
-  game_state[GetPlayerName(player)]$hand
+  game_state[[GetPlayerName(player)]]$hand
 }
 
 LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
