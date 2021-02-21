@@ -4,8 +4,10 @@
 #'
 #' @return
 #'
-ShuffleNewDeck <- function(seed=1) {
-  set.seed(seed)
+ShuffleNewDeck <- function(seed=NULL) {
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
   sample(ordered_deck, size = length(ordered_deck), replace = F)
 }
 
@@ -30,7 +32,7 @@ DealBoardCards = function(game_state){
 #' @return
 #'
 #' @examples
-InitialiseGameState = function(seed = 1, starting_player = 1) {
+InitialiseGameState = function(seed = NULL, starting_player = 1) {
   game_state = list(deck=ShuffleNewDeck(seed),
                     player1 = list(hand = c(), stack = c(), scope = 0),
                     player2 = list(hand = c(), stack = c(), scope = 0),
