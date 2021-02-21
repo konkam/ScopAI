@@ -27,3 +27,14 @@ test_that("Finishing game executes correctly", {
   g3 = FinishGame(game_state = g2)
   expect_equal(length(g3$board), 0)
 })
+test_that("Game runs correctly"){
+  game = RunGame(seed = 1, starting_player = 1, DecisionFunction = DummyDecision)
+  expect_false(any(is.na(game$score_player1)))
+  expect_false(any(is.na(game$score_player2)))
+  hands_player1 = game$game_history %>% lapply(FUN = function(x) x$player1$hand)
+  expect_equal(unique(hands_player1 %>% lapply(length)) %>% unlist %>% sort, 0:3)
+  expect_false(any(hands_player1 %>% unlist %>% is.na()))
+  hands_player2 = game$game_history %>% lapply(FUN = function(x) x$player2$hand)
+  expect_equal(unique(hands_player2 %>% lapply(length)) %>% unlist %>% sort, 0:3)
+  expect_false(any(hands_player2 %>% unlist %>% is.na()))
+}

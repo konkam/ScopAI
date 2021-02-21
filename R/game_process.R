@@ -17,20 +17,25 @@
 #'
 #' @return
 #'
-RunGame = function(seed, starting_player, DecisionFunction){
+RunGame = function(starting_player, DecisionFunction, seed = 1){
   game_state = InitialiseGameState()
   current_player = starting_player
- while (game_state$turn < 36){
+  game_states = list()
+  game_states[[game_state$turn]]=game_state
+ while (length(game_state$deck)>=6&&game_state$turn<=36){
+   # print(length(game_state$deck))
 
-    while(length(game_state[GetPlayerName(current_player)]["hand"])>0){
+    while(length(GetPlayerHand(game_state, current_player))>0){
       game_state = PlayCard(game_state = game_state, player = current_player, decision = DecisionFunction(game_state, current_player))
       current_player = SwitchPlayer(current_player)
-      game_state$turn = game_state$turn + 1
+      game_states[[game_state$turn]]=game_state
     }
    game_state = DealPlayersCards(game_state = game_state, starting_player = starting_player)
  }
+  # print(length(game_state$deck))
   game_state = FinishGame(game_state = game_state)
-  return(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1), score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2))
+  # At the end of the game, people have NAs in their hands
+  return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1), score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2), game_history = game_states))
 }
 
 #' Title
@@ -45,6 +50,9 @@ DealPlayersCards = function(game_state, starting_player){
   if(starting_player!=1&&starting_player!=2){
     stop(print("starting_player should be 1 or 2"))
   }
+  if(length(game_state$deck)<6){
+    stop("The deck does not have enough cards left to deal")
+  }
   if(starting_player==1){
     game_state$player1$hand = c(game_state$player1$hand, game_state$deck[1:3])
     game_state$player2$hand = c(game_state$player2$hand, game_state$deck[4:6])
@@ -52,6 +60,9 @@ DealPlayersCards = function(game_state, starting_player){
   else{
     game_state$player1$hand = c(game_state$player1$hand, game_state$deck[4:6])
     game_state$player2$hand = c(game_state$player2$hand, game_state$deck[1:3])
+  }
+  if(length(game_state$deck)==6){
+    game_state$deck = c()
   }
   game_state$deck = game_state$deck[7:length(game_state$deck)]
   return(game_state)
