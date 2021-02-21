@@ -19,4 +19,6 @@ test_that("Cards allowed for the taking", {
   expect_equal(TakeableCardsOnBoardBruteForce("B5", c("B4", "S9", "B1")) %>% unlist, c("B4", "B1"))
   expect_equal(TakeableCardsOnBoardBruteForce("B9", c("B4", "S9", "B1")) %>% unlist, c("S9"))
   expect_equal(TakeableCardsOnBoardBruteForce("B9", c("D9", "S9", "B1")) %>% unlist, c("D9","S9"))
+  expect_equal(TakeableCardsOnBoardBruteForce("B10", c("D9", "S9", "B2")) %>% unlist, NULL)
+  expect_equal(TakeableCardsOnBoardBruteForce("B4", c("D1", "S1", "B1", "C1")) %>% unlist, c("D1", "S1", "B1", "C1"))
 })

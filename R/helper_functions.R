@@ -55,10 +55,17 @@ TakeableCardsOnBoardBruteForce = function(card, board){
   if (val %in% boardvals){
     return(board[val==boardvals] %>% as.list())
   }
-  board_subsets = AllSubsets(board)
-  subsets_sum_value = board_subsets %>% sapply(GetSumValuesOfCards)
-  allowed_subsets_mask = subsets_sum_value==val
-  return(board_subsets[allowed_subsets_mask])
+  else{
+    board_subsets = AllSubsets(board)
+    subsets_sum_value = board_subsets %>% sapply(GetSumValuesOfCards)
+    allowed_subsets_mask = subsets_sum_value==val
+    if(all(!allowed_subsets_mask)){
+      return(list(NULL))
+    }
+    else{
+      return(board_subsets[allowed_subsets_mask])
+    }
+  }
 }
 
 
