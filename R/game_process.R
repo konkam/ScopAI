@@ -24,11 +24,14 @@ RunGame = function(seed, decisions1, decisions2, starting_player){
   if(length(decisions2)!=18){
     stop("decision2 must contain 18 decisions")
   }
-  second_player = ifelse(starting_player==1, )
+  decisions = list(decisions1, decisions2)
   game_state = InitialiseGameState()
+  current_player = starting_player
  while (game_state$turn < 36){
-    while(1==1){
-      1+1
+
+    while(length(game_state[GetPlayerName(current_player)]["hand"])>0){
+      game_state = PlayCard(game_state = game_state, player = current_player, decision = decisions[[current_player]][turn])
+      current_player = SwitchPlayer(current_player)
     }
  }
 }
