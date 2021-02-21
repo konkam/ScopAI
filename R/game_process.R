@@ -98,7 +98,10 @@ PlayCard = function(game_state, player, decision){
       game_state$board = c(game_state$board, decision$play)
     }
   }
+  game_state$turn = game_state$turn + 1
   return(game_state)
 }
 
-# FinishGame = function(game_state)
+FinishGame = function(game_state){
+
+}
