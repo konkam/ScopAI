@@ -32,8 +32,8 @@ DealBoardCards = function(game_state){
 #' @examples
 InitialiseGameState = function(seed = 1, starting_player = 1) {
   game_state = list(deck=ShuffleNewDeck(seed),
-                    player1 = list(hand = list(), stack = list(), scope = 0),
-                    player2 = list(hand = list(), stack = list(), scope = 0),
+                    player1 = list(hand = c(), stack = c(), scope = 0),
+                    player2 = list(hand = c(), stack = c(), scope = 0),
                     turn = 1, last_taker = NULL) %>%
     DealPlayersCards(starting_player = starting_player) %>%
     DealBoardCards()
