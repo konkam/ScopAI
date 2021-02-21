@@ -3,7 +3,6 @@
 #' Title
 #'
 #' @return
-#' @export
 #'
 ShuffleNewDeck <- function(seed=1) {
   set.seed(seed)
@@ -16,7 +15,6 @@ ShuffleNewDeck <- function(seed=1) {
 #' @param starting_player
 #'
 #' @return
-#' @export
 #'
 #' @examples
 InitialiseGameState = function(seed = 1, starting_player = 1) {

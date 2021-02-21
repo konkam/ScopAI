@@ -16,10 +16,11 @@
 #' last_taker
 #'
 #' @return
-#' @export
 #'
 RunGame = function(starting_deck, decisions1, decisions2, starting_player){
- 1+1
+ while (game_state$turn < 36){
+
+ }
 }
 
 #' Title
@@ -51,7 +52,6 @@ DealPlayersCards = function(game_state, starting_player){
 #' @param game_state
 #'
 #' @return
-#' @export
 #'
 #' @examples
 DealBoardCards = function(game_state){
@@ -69,7 +69,6 @@ DealBoardCards = function(game_state){
 #' A decision is a list(play = card played, a single card, take = cards taken.)
 #'
 #' @return
-#' @export
 #'
 #' @examples
 PlayCard = function(game_state, player, decision){
