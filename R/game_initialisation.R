@@ -11,6 +11,19 @@ ShuffleNewDeck <- function(seed=1) {
 
 #' Title
 #'
+#' @param game_state
+#'
+#' @return
+#'
+#' @examples
+DealBoardCards = function(game_state){
+  game_state$board = game_state$deck[1:4]
+  game_state$deck = game_state$deck[5:length(game_state$deck)]
+  return(game_state)
+}
+
+#' Title
+#'
 #' @param seed
 #' @param starting_player
 #'

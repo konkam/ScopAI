@@ -17,9 +17,19 @@
 #'
 #' @return
 #'
-RunGame = function(starting_deck, decisions1, decisions2, starting_player){
+RunGame = function(seed, decisions1, decisions2, starting_player){
+  if(length(decisions1)!=18){
+    stop("decision1 must contain 18 decisions")
+  }
+  if(length(decisions2)!=18){
+    stop("decision2 must contain 18 decisions")
+  }
+  second_player
+  game_state = InitialiseGameState()
  while (game_state$turn < 36){
-
+    while(1==1){
+      1+1
+    }
  }
 }
 
@@ -44,19 +54,6 @@ DealPlayersCards = function(game_state, starting_player){
     game_state$hand2 = c(game_state$hand2, game_state$deck[1:3])
   }
   game_state$deck = game_state$deck[7:length(game_state$deck)]
-  return(game_state)
-}
-
-#' Title
-#'
-#' @param game_state
-#'
-#' @return
-#'
-#' @examples
-DealBoardCards = function(game_state){
-  game_state$board = game_state$deck[1:4]
-  game_state$deck = game_state$deck[5:length(game_state$deck)]
   return(game_state)
 }
 
