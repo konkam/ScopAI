@@ -50,8 +50,9 @@ AllSubsetsFast <- function(set) {
 }
 
 TakeableCardsOnBoardBruteForce = function(card, board){
-  board_subsets = AllSubsets(board)
   val = GetValueOfCard(card)
+  # if GetValuesOfCards
+  board_subsets = AllSubsets(board)
   subsets_sum_value = board_subsets %>% sapply(GetSumValuesOfCards)
   allowed_subsets_mask = subsets_sum_value==val
   return(board_subsets[allowed_subsets_mask])
