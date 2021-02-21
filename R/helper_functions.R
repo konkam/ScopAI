@@ -23,10 +23,16 @@ GetPlayerHand = function(game_state, player){
 }
 
 AllSubsets = function(cards){
-  cards %>%
-    (function(cards) lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
-    purrr::flatten() %>%
-    c(list(c()))
+  if (length(cards)==0){
+    return(list(NULL))
+  }
+  else{
+    cards %>%
+      (function(cards) lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
+      purrr::flatten() %>%
+      c(list(c()))
+  }
+
 }
 
 
