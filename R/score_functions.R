@@ -119,9 +119,9 @@ GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
   other_data <- game_state[[GetPlayerName(other_player)]]
   sum(
     player_data$scope,
-    GiveSetteBelloScoreForAPlayer(player_data$hand),
-    GivePrimieraScoreForAPlayer(player_data$hand, other_data$hand),
-    GiveCardsScoreForAPlayer(player_data$hand, other_data$hand),
-    GiveDenariScoreForAPlayer(player_data$hand, other_data$hand)
+    GiveSetteBelloScoreForAPlayer(player_data$stack),
+    GivePrimieraScoreForAPlayer(player_data$stack, other_data$stack),
+    GiveCardsScoreForAPlayer(player_data$stack, other_data$stack),
+    GiveDenariScoreForAPlayer(player_data$stack, other_data$stack)
   )
 }
