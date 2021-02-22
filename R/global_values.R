@@ -32,64 +32,47 @@ deck_as_named_values <- setNames(
   nm = ordered_deck
 )
 
-sum_dict <- vector(mode = "list", length = 5)
-sum_dict[[1]] <- list(one_card = list(1))
-sum_dict[[2]] <- list(
-  one_card = list(2),
-  two_cards = list(c(1, 1))
-)
-sum_dict[[3]] <- list(
-  one_card = list(3),
-  two_cards = list(c(1, 2)),
-  three_cards = list(c(1, 1, 1))
-)
-sum_dict[[4]] <- list(
-  one_card = list(4),
-  two_cards = list(c(1, 3), c(2, 2)),
-  three_cards = list(c(1, 1, 2)),
-  four_cards = list((c(1, 1, 1, 1)))
-)
-sum_dict[[5]] <- list(
-  one_card = list(5),
-  two_cards = list(c(1, 4), c(2, 3)),
-  three_cards = list(c(1, 1, 3), c(1, 2, 2)),
-  four_cards = list((c(1, 1, 1, 2)))
-)
+play_take_dict <- vector(mode = "list", length = length(ordered_deck))
+names(play_take_dict) <- ordered_deck
 
-# PickACardBasedOnItsValue <- function(cards, value) {
-#   wanted_GetValuesOfCards(cards)
-#
-# }
-# loop on card value
-# played_card <- "D4"
-# played_card_value <- GetValuesOfCards(played_card)
-# TakeableCardsOnBoardBruteForce(card = "D4", board = c("D3", "C1", "C2", "C4"))
-# # don't consider cards on the board that are higher than your card
-# reduced_board <- deck_as_named_values[deck_as_named_values <= played_card_value]
-# reduced_board <- reduced_board[names(reduced_board) != played_card]
-# dict_for_this_value <- sum_dict[[played_card_value]]
-# for (n_cards in 1:length(dict_for_this_value)) {
-#   combinations_for_n <- dict_for_this_value[[n_cards]]
-#   for (i in 1:length(combinations_for_n)) {
-#     value_combination <- combinations_for_n[[i]]
-#     reduced_board_for_this_combination <- reduced_board[reduced_board %in% value_combination]
-#     for (value in value_combination) {
-#       # dfg
-#     }
-#     reduced_board[reduced_board]
-#   }
-#   reduced_board[dict_for_this_value]
-# }
-# take_opportunities <- vector()
-# for (i in 1:min(played_card_value, 6)) {
-#   for (combination  in combn(board_with_values, i, simplify = F)) {
-#     if (sum(combination) == one_card_value) {
-#       take_opportunities[[i]] <- names(combination)
-#     }
-#   }
-# }
-#
+for (played_card in ordered_deck) {
+  played_card_value <- GetValuesOfCards(played_card)
+  # don't consider cards on the board that are higher than your card
+  reduced_board <- deck_as_named_values[deck_as_named_values <= played_card_value]
+  reduced_board <- reduced_board[names(reduced_board) != played_card]
+  # partition on the highest card
+  for (highest_card in 1:played_card_value) {
+    board_highest_bool <- reduced_board == highest_card
+    board_complement_bool <- reduced_board <= min(played_card_value - highest_card,
+                                                  highest_card)
+    board_considered <- reduced_board[board_highest_bool | board_complement_bool]
+    boundary_of_combinations <- min(played_card_value - highest_card + 1, 6)
+    combinations_with_this_highest_card <- TakeableCardsOnBoardBruteForce(
+      played_card,
+      names(board_considered),
+      boundary = boundary_of_combinations)
+    any(duplicated(combinations_with_this_highest_card))
+    play_take_dict[[played_card]] <- c(play_take_dict[[played_card]],
+                                       combinations_with_this_highest_card)
+  }
+  play_take_dict[[played_card]] <- c("none", play_take_dict[[played_card]])
+  play_take_dict[[played_card]] <- play_take_dict[[played_card]] %>%
+    .[!duplicated(.)]
+  # there are duplicated because the partition is not perfect
+  # indeed we don't force the takeables cards to include the highest
+}
 
+# what if you take only into consideration Denari or not (use sort to avoid redondance)
+play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)
+  unique(lapply(card, function(take) sort(sub("[BCS]", "no_D", take)))))
 
-# hello world
+if (F) {
+  # number of combinations play / take
+  sapply(play_take_dict, length) # max is 1699 for Re (10)
+  sapply(play_take_dict, length) %>% sum() # 16208
+
+  sapply(play_take_dict_denari_or_not, length) # max is 188 for Re (10)
+  sapply(play_take_dict_denari_or_not, length) %>% sum() # 2214
+}
+
 

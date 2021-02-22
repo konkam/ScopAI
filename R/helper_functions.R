@@ -76,6 +76,16 @@ AllSubsets = function(cards, boundary = length(cards)){
 }
 
 
+#' Title
+#'
+#' @param card
+#' @param board
+#' @param boundary
+#'
+#' @return
+#' @export
+#'
+#' @examples
 TakeableCardsOnBoardBruteForce <- function(card, board, boundary = length(board)) {
   val <- GetValueOfCard(card)
   boardvals <- GetValuesOfCards(board)
