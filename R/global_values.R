@@ -35,44 +35,49 @@ deck_as_named_values <- setNames(
 play_take_dict <- vector(mode = "list", length = length(ordered_deck))
 names(play_take_dict) <- ordered_deck
 
-for (played_card in ordered_deck) {
-  played_card_value <- GetValuesOfCards(played_card)
-  # don't consider cards on the board that are higher than your card
-  reduced_board <- deck_as_named_values[deck_as_named_values <= played_card_value]
-  reduced_board <- reduced_board[names(reduced_board) != played_card]
-  # partition on the highest card
-  for (highest_card in 1:played_card_value) {
-    board_highest_bool <- reduced_board == highest_card
-    board_complement_bool <- reduced_board <= min(played_card_value - highest_card,
-                                                  highest_card)
-    board_considered <- reduced_board[board_highest_bool | board_complement_bool]
-    boundary_of_combinations <- min(played_card_value - highest_card + 1, 6)
-    combinations_with_this_highest_card <- TakeableCardsOnBoardBruteForce(
-      played_card,
-      names(board_considered),
-      boundary = boundary_of_combinations)
-    any(duplicated(combinations_with_this_highest_card))
-    play_take_dict[[played_card]] <- c(play_take_dict[[played_card]],
-                                       combinations_with_this_highest_card)
-  }
-  play_take_dict[[played_card]] <- c("none", play_take_dict[[played_card]])
-  play_take_dict[[played_card]] <- play_take_dict[[played_card]] %>%
-    .[!duplicated(.)]
-  # there are duplicated because the partition is not perfect
-  # indeed we don't force the takeables cards to include the highest
-}
+# I've commented all the following part because when I install the package
+# there is a problem with the function TakeableCardsOnBoardBruteForce not being defined (don't understannd why)
+# eventually we should run the commented script and then save the dictionary somewhere,
+# and reload it when loading the package (it is 5 Mb large)
 
-# what if you take only into consideration Denari or not (use sort to avoid redondance)
-play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)
-  unique(lapply(card, function(take) sort(sub("[BCS]", "no_D", take)))))
-
-if (F) {
-  # number of combinations play / take
-  sapply(play_take_dict, length) # max is 1699 for Re (10)
-  sapply(play_take_dict, length) %>% sum() # 16208
-
-  sapply(play_take_dict_denari_or_not, length) # max is 188 for Re (10)
-  sapply(play_take_dict_denari_or_not, length) %>% sum() # 2214
-}
+# for (played_card in ordered_deck) {
+#   played_card_value <- GetValuesOfCards(played_card)
+#   # don't consider cards on the board that are higher than your card
+#   reduced_board <- deck_as_named_values[deck_as_named_values <= played_card_value]
+#   reduced_board <- reduced_board[names(reduced_board) != played_card]
+#   # partition on the highest card
+#   for (highest_card in 1:played_card_value) {
+#     board_highest_bool <- reduced_board == highest_card
+#     board_complement_bool <- reduced_board <= min(played_card_value - highest_card,
+#                                                   highest_card)
+#     board_considered <- reduced_board[board_highest_bool | board_complement_bool]
+#     boundary_of_combinations <- min(played_card_value - highest_card + 1, 6)
+#     combinations_with_this_highest_card <- TakeableCardsOnBoardBruteForce(
+#       played_card,
+#       names(board_considered),
+#       boundary = boundary_of_combinations)
+#     any(duplicated(combinations_with_this_highest_card))
+#     play_take_dict[[played_card]] <- c(play_take_dict[[played_card]],
+#                                        combinations_with_this_highest_card)
+#   }
+#   play_take_dict[[played_card]] <- c("none", play_take_dict[[played_card]])
+#   play_take_dict[[played_card]] <- play_take_dict[[played_card]] %>%
+#     .[!duplicated(.)]
+#   # there are duplicated because the partition is not perfect
+#   # indeed we don't force the takeables cards to include the highest
+# }
+#
+# # what if you take only into consideration Denari or not (use sort to avoid redondance)
+# play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)
+#   unique(lapply(card, function(take) sort(sub("[BCS]", "no_D", take)))))
+#
+# if (F) {
+#   # number of combinations play / take
+#   sapply(play_take_dict, length) # max is 1699 for Re (10)
+#   sapply(play_take_dict, length) %>% sum() # 16208
+#
+#   sapply(play_take_dict_denari_or_not, length) # max is 188 for Re (10)
+#   sapply(play_take_dict_denari_or_not, length) %>% sum() # 2214
+# }
 
 
