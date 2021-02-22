@@ -97,21 +97,21 @@ TakeableCardsOnBoardBruteForce <- function(card, board, boundary = length(board)
 }
 
 
-LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
-  one_card_value <- GetValuesOfCards(one_card)
-  board_with_values <- setNames(
-    object = GetValuesOfCards(board),
-    nm = board
-  )
-  # don't consider cards on the board that are higher than your card
-  board_with_values <- board_with_values[board_with_values <= one_card_value]
-  take_opportunities <- vector()
-  for (i in 1:length(board_with_values)) {
-    for (combination in combn(board_with_values, i, simplify = F)) {
-      if (sum(combination) == one_card_value) {
-        take_opportunities[[i]] <- names(combination)
-      }
-    }
-  }
-  return(take_opportunities)
-}
+# LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
+#   one_card_value <- GetValuesOfCards(one_card)
+#   board_with_values <- setNames(
+#     object = GetValuesOfCards(board),
+#     nm = board
+#   )
+#   # don't consider cards on the board that are higher than your card
+#   board_with_values <- board_with_values[board_with_values <= one_card_value]
+#   take_opportunities <- vector()
+#   for (i in 1:length(board_with_values)) {
+#     for (combination in combn(board_with_values, i, simplify = F)) {
+#       if (sum(combination) == one_card_value) {
+#         take_opportunities[[i]] <- names(combination)
+#       }
+#     }
+#   }
+#   return(take_opportunities)
+# }

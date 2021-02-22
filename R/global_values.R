@@ -71,6 +71,11 @@ names(play_take_dict) <- ordered_deck
 # play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)
 #   unique(lapply(card, function(take) sort(sub("[BCS]", "no_D", take)))))
 #
+# # what if you take only into consideration the values
+# play_take_dict_only_values <- lapply(play_take_dict, function(card)
+#   unique(lapply(card, function(take) sort(sub("[BCDS]", "", take)))))
+#
+#
 # if (F) {
 #   # number of combinations play / take
 #   sapply(play_take_dict, length) # max is 1699 for Re (10)
@@ -78,6 +83,9 @@ names(play_take_dict) <- ordered_deck
 #
 #   sapply(play_take_dict_denari_or_not, length) # max is 188 for Re (10)
 #   sapply(play_take_dict_denari_or_not, length) %>% sum() # 2214
+#
+#   sapply(play_take_dict_only_values, length) # max is 35 for Re (10)
+#   sapply(play_take_dict_only_values, length) %>% sum() # 532
 # }
-
+#
 
