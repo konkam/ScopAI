@@ -24,7 +24,7 @@ test_that("Optimisable decision works", {
     decision <- OptimisableDecision(g, player = 1, params = 0.5)
     expect_true(GetValueOfCard(decision$play) == GetSumValuesOfCards(decision$take) | is.null(decision$take))
   }
-  OptimisedDecision = function(g, player) OptimisableDecision(g, player, params = 0.5)
+  OptimisedDecision <- function(g, player) OptimisableDecision(g, player, params = 0.5)
   game <- RunGame(seed = 1, starting_player = 1, DecisionFunction = OptimisedDecision)
   expect_false(any(is.na(game$score_player1)))
   expect_false(any(is.na(game$score_player2)))
