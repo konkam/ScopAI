@@ -1,5 +1,5 @@
 test_that("initialisation works", {
-  game_state = InitialiseGameState(seed = 1, starting_player = 1)
+  game_state <- InitialiseGameState(seed = 1, starting_player = 1)
   expect_equal(game_state$deck %>% length(), 30)
   expect_equal(game_state$player1$hand %>% length(), 3)
   expect_equal(game_state$player2$hand %>% length(), 3)

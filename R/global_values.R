@@ -1,40 +1,60 @@
 # Define values that will be the same for everyone
 colours <- c("B", "C", "D", "S")
 
-colours_dict <- setNames(object = c("Spade", "Coppe", "Denari", "Bastoni"),
-                         nm = c("S", "C", "D", "B"))
+colours_dict <- setNames(
+  object = c("Spade", "Coppe", "Denari", "Bastoni"),
+  nm = c("S", "C", "D", "B")
+)
 
-values_dict <- setNames(object = 8:10,
-                         nm = c("Fante", "Cavallo", "Re"))
+values_dict <- setNames(
+  object = 8:10,
+  nm = c("Fante", "Cavallo", "Re")
+)
 
-primiera_dict <- setNames(object = c(16, 12, 13, 14, 15, 18, 21, 10, 10, 10),
-                          nm = 1:10)
+primiera_dict <- setNames(
+  object = c(16, 12, 13, 14, 15, 18, 21, 10, 10, 10),
+  nm = 1:10
+)
 
 deck_dict <- expand.grid(val = 1:10, col = colours, stringsAsFactors = F) %>%
-  (function(df) mapply(FUN = function(x,y) list(colour = x, value = y),
-                       df$col, df$val, SIMPLIFY = F))
+  (function(df) {
+    mapply(
+      FUN = function(x, y) list(colour = x, value = y),
+      df$col, df$val, SIMPLIFY = F
+    )
+  })
 names(deck_dict) <- paste0(rep(colours, each = 10), rep(1:10, 4))
 
 ordered_deck <- names(deck_dict)
 
-deck_as_named_values <- setNames(object = GetValuesOfCards(ordered_deck),
-                                 nm = ordered_deck)
+deck_as_named_values <- setNames(
+  object = GetValuesOfCards(ordered_deck),
+  nm = ordered_deck
+)
 
 sum_dict <- vector(mode = "list", length = 5)
 sum_dict[[1]] <- list(one_card = list(1))
-sum_dict[[2]] <- list(one_card = list(2),
-                      two_cards = list(c(1, 1)))
-sum_dict[[3]] <- list(one_card = list(3),
-                      two_cards = list(c(1, 2)),
-                      three_cards = list(c(1, 1, 1)))
-sum_dict[[4]] <- list(one_card = list(4),
-                      two_cards = list(c(1, 3), c(2, 2)),
-                      three_cards = list(c(1, 1, 2)),
-                      four_cards = list((c(1, 1, 1, 1))))
-sum_dict[[5]] <- list(one_card = list(5),
-                      two_cards = list(c(1, 4), c(2, 3)),
-                      three_cards = list(c(1, 1, 3), c(1, 2, 2)),
-                      four_cards = list((c(1, 1, 1, 2))))
+sum_dict[[2]] <- list(
+  one_card = list(2),
+  two_cards = list(c(1, 1))
+)
+sum_dict[[3]] <- list(
+  one_card = list(3),
+  two_cards = list(c(1, 2)),
+  three_cards = list(c(1, 1, 1))
+)
+sum_dict[[4]] <- list(
+  one_card = list(4),
+  two_cards = list(c(1, 3), c(2, 2)),
+  three_cards = list(c(1, 1, 2)),
+  four_cards = list((c(1, 1, 1, 1)))
+)
+sum_dict[[5]] <- list(
+  one_card = list(5),
+  two_cards = list(c(1, 4), c(2, 3)),
+  three_cards = list(c(1, 1, 3), c(1, 2, 2)),
+  four_cards = list((c(1, 1, 1, 2)))
+)
 
 # PickACardBasedOnItsValue <- function(cards, value) {
 #   wanted_GetValuesOfCards(cards)
