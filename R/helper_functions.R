@@ -20,12 +20,12 @@ GetPlayerHand <- function(game_state, player) {
   game_state[[GetPlayerName(player)]]$hand
 }
 
-AllSubsetsWithCombn <- function(cards) {
+AllSubsetsWithCombn <- function(cards, boundary = length(cards)) {
   if (length(cards) == 0) {
     return(return(character(0)))
   }
   else {
-      purrr::flatten(lapply(1:length(cards), FUN = function(n) combn(cards, m = n, simplify = F))) %>%
+      purrr::flatten(lapply(1:boundary, FUN = function(n) combn(cards, m = n, simplify = F))) %>%
       c(list(character(0)))
   }
 }
@@ -61,7 +61,7 @@ AllSubsetsWithGenerator <- function(set) {
 #' @param cards A vector of cards from which to generate all subsets
 #'
 #'
-AllSubsets = function(cards){
+AllSubsets = function(cards, boundary = length(cards)){
   n = length(cards)
   if (n == 0) {
     return(character(0))
@@ -70,20 +70,20 @@ AllSubsets = function(cards){
     return(AllSubsetsWithGenerator(cards))
   }
   else{
-    return(AllSubsetsWithCombn(cards))
+    return(AllSubsetsWithCombn(cards, boundary))
   }
 
 }
 
 
-TakeableCardsOnBoardBruteForce <- function(card, board) {
+TakeableCardsOnBoardBruteForce <- function(card, board, boundary = length(board)) {
   val <- GetValueOfCard(card)
   boardvals <- GetValuesOfCards(board)
   if (val %in% boardvals) {
     return(board[val == boardvals] %>% as.list())
   }
   else {
-    board_subsets <- AllSubsets(board)
+    board_subsets <- AllSubsets(board, boundary)
     subsets_sum_value <- board_subsets %>% sapply(GetSumValuesOfCards)
     allowed_subsets_mask <- subsets_sum_value == val
     if (all(!allowed_subsets_mask)) {
