@@ -15,7 +15,7 @@
 #' turn
 #' last_taker
 #'
-#' @return
+#' @export
 #'
 RunGame <- function(starting_player, DecisionFunction, seed = 1) {
   game_state <- InitialiseGameState()
