@@ -36,7 +36,7 @@ play_take_dict <- vector(mode = "list", length = length(ordered_deck))
 names(play_take_dict) <- ordered_deck
 
 # I've commented all the following part because when I install the package
-# there is a problem with the function TakeableCardsOnBoardBruteForce not being defined (don't understannd why)
+# there is a problem with the function TakeableCardsOnBoardBruteForce not being defined (don't understand why)
 # eventually we should run the commented script and then save the dictionary somewhere,
 # and reload it when loading the package (it is 5 Mb large)
 
