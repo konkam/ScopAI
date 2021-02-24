@@ -7,6 +7,7 @@
     jeu](#idées-de-tests-pour-les-fonctions-de-jeu)
 -   [Idées pour l’apprentissage](#idées-pour-lapprentissage)
     -   [Apprentissage des règles](#apprentissage-des-règles)
+-   [Distribution des scores](#distribution-des-scores)
 
     knitr::opts_chunk$set(cache = TRUE)
 
@@ -74,3 +75,10 @@ des mouvements interdits dans la fonction de score, de manière à
 pénaliser ces derniers
 
 On peut aussi choisir de contraindre les choix aux mouvements autorisés.
+
+Distribution des scores
+=======================
+
+Il serait utile d’étudier au moins par une simulation la distribution
+des scores pour différentes stratégies, afin de juger de la variabilité
+et de la difficulté d’optimiser des décisions en milieu aléatoire

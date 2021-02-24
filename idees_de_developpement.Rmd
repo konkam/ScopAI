@@ -54,3 +54,8 @@ Remarque générale: il est plus rapide et efficace de partir d'un réseau de ne
 On peut vouloir apprendre les règles du jeu en apprenant des choix licites. Pour cela, on peut soit utiliser des parties licites et chercher à reproduire les mouvements, soit mettre une pénalité forte à des mouvements interdits dans la fonction de score, de manière à pénaliser ces derniers
 
 On peut aussi choisir de contraindre les choix aux mouvements autorisés.
+
+
+# Distribution des scores
+
+Il serait utile d'étudier au moins par une simulation la distribution des scores pour différentes stratégies, afin de juger de la variabilité et de la difficulté d'optimiser des décisions en milieu aléatoire
