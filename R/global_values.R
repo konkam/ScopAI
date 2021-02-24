@@ -26,6 +26,10 @@ deck_dict <- expand.grid(val = 1:10, col = colours, stringsAsFactors = F) %>%
 names(deck_dict) <- paste0(rep(colours, each = 10), rep(1:10, 4))
 
 ordered_deck <- names(deck_dict)
+B_cards <- ordered_deck[1:10]
+C_cards <- ordered_deck[11:20]
+D_cards <- ordered_deck[21:30]
+S_cards <- ordered_deck[31:40]
 
 deck_as_named_values <- setNames(
   object = GetValuesOfCards(ordered_deck),
