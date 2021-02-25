@@ -5,11 +5,11 @@ output:
     toc: true
 ---
 
-```{r}
+```{r, include=FALSE}
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 library(ScopAI)
 ```
 

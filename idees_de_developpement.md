@@ -9,10 +9,6 @@
     -   [Apprentissage des règles](#apprentissage-des-règles)
 -   [Distribution des scores](#distribution-des-scores)
 
-    knitr::opts_chunk$set(cache = TRUE)
-
-    library(ScopAI)
-
 Intro
 =====
 
