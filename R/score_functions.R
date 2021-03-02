@@ -114,7 +114,7 @@ GiveSetteBelloScoreForAPlayer <- function(stack_player) {
 #' @param player 1 or 2 depending on the player
 #'
 GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
-  other_player <- player %% 2 + 1
+  other_player <- GiveOtherPlayer(player)
   player_data <- game_state[[GetPlayerName(player)]]
   other_data <- game_state[[GetPlayerName(other_player)]]
   sum(
@@ -387,3 +387,43 @@ GivePrimieraExpectedScoreForAPlayer <- function(stack_player, stack_other) {
 GiveSetteBelloExpectedScoreForAPlayer <- function(stack_player, stack_other) {
   GiveSetteBelloScoreForAPlayer(stack_player) - GiveSetteBelloScoreForAPlayer(stack_other)
 }
+
+
+#' Give Expected Score For A Decision
+#' You can choose to allocate different weights to the different scores
+#'
+#' @param game_state
+#' @param player
+#' @param decision
+#' @param check_for_validity
+#' @param cards_weight
+#' @param primiera_weight
+#' @param sette_bello_weight
+#' @param denari_weight
+#' @param scope_weight
+#'
+GiveExpectedScoreForADecision <- function(game_state = InitialiseGameState(seed = 1),
+                                          player = 1,
+                                          decision,
+                                          check_for_validity =  F,
+                                          cards_weight = 1,
+                                          primiera_weight = 1,
+                                          sette_bello_weight = 1,
+                                          denari_weight = 1,
+                                          scope_weight = 1) {
+  if (check_for_validity) IsADecisionValid(game_state, player, decision)
+
+  game_state <- PlayCard(game_state, player, decision)
+  pla <- paste0("player", player)
+  other <- paste0("player", GiveOtherPlayer(player))
+  stack_player <- game_state[[pla]]$stack
+  stack_other <- game_state[[other]]$stack
+
+  cards_weight*GiveCardsExpectedScoreForAPlayer(stack_player, stack_other) +
+    denari_weight*GiveDenariExpectedScoreForAPlayer(stack_player, stack_other) +
+    # primiera_weight*GivePrimieraExpectedScoreForAPlayer(stack_player, stack_other) + # for now it is commented because it is not optimized, gives a memory error
+    sette_bello_weight*GiveSetteBelloExpectedScoreForAPlayer(stack_player, stack_other) +
+    scope_weight*game_state[[pla]]$scope
+}
+
+

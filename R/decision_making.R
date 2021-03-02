@@ -17,8 +17,8 @@ IsADecisionPossible <- function(decision) {
 #' @param decision
 #'
 IsADecisionValid <- function(game_state = InitialiseGameState(seed = 1),
-                              player = 1,
-                              decision) {
+                             player = 1,
+                             decision) {
   IsADecisionPossible(decision)
   if (!decision$play %in% game_state[[paste0("player", player)]]$hand) stop("the card played is not in the hand of the player")
   if (any(!decision$take %in% c(game_state$board, "none"))) stop("some of the cards taken are not on the board")
