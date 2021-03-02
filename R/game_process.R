@@ -87,7 +87,7 @@ PlayCard <- function(game_state, player, decision) {
       game_state$player1$stack <- c(game_state$player1$stack, decision$play, decision$take)
       game_state$board <- game_state$board[!game_state$board %in% decision$take]
       game_state$last_taker <- 1
-      if (length(game_state$board) == 0) game_state$player1$scope <- game_state$player1$scope + 1
+      if (length(game_state$board) == 0 & game_state$turn < 36) game_state$player1$scope <- game_state$player1$scope + 1
     } else {
       game_state$board <- c(game_state$board, decision$play)
     }
@@ -97,7 +97,7 @@ PlayCard <- function(game_state, player, decision) {
       game_state$player2$stack <- c(game_state$player2$stack, decision$play, decision$take)
       game_state$board <- game_state$board[!game_state$board %in% decision$take]
       game_state$last_taker <- 2
-      if (length(game_state$board) == 0) game_state$player2$scope <- game_state$player2$scope + 1
+      if (length(game_state$board) == 0 & game_state$turn < 36) game_state$player2$scope <- game_state$player2$scope + 1
     } else {
       game_state$board <- c(game_state$board, decision$play)
     }
