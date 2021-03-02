@@ -60,14 +60,12 @@ On peut aussi choisir de contraindre les choix aux mouvements autorisés.
 
 Il serait utile d'étudier au moins par une simulation la distribution des scores pour différentes stratégies, afin de juger de la variabilité et de la difficulté d'optimiser des décisions en milieu aléatoire
 
-# Faire une fonction Décision Possible Rapide
-Utiliser le dictionnaire universel des (play, take) pour réduire les possibilités et lister toutes les (play, take) associées à un hand et un board 
--> pour chaque play possible, restreindre le dictionnaire à ce play, mais même comme ça la recherche peut être encore longue car plus de 1000 possibilités pour un 10 
--> soit on vérifie pour tous les takes associés si les cartes sont sur le board (all take %in% board), soit on trouve un moyen de restreindre la recherche à partir de l'info des cartes qui sont sur le board.
+# Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
+Cette fonction utilise le dictionnaire universel des (play, take) pour réduire les possibilités et lister tous les 'take' associés à un play et un board 
+-> même comme ça la recherche peut être encore longue car plus de 1000 possibilités pour un 10 
+-> on peut chercher un moyen de restreindre la recherche à partir de l'info des cartes qui sont sur le board.
 Par exemple on peut faire des sous-dictionnaires redondants selon chacune des cartes présentes (donc pour takeable_dict[[D6]] on met des sous-entrées pour [[B1]], [[C1]], … jusqu'à [[S6]]).
-On peut aussi, pour chaque play envisagé, filtrer du board toutes les cartes ayant une valeur supérieure, et aussi faire la condition que s'il existe une carte de la même valeur on est obligé de la choisir avant d'explorer le reste. 
--> ces 2 mesures simples devraient rendre l'énumération rapide dès que le play n'est pas trop grand.
-On peut aussi analyser les values du board, et faire des sous-dictionnaires par values, comme ça on filtre tous les sous dictionnaires n'ayant pas les bonnes values...
+-> On peut aussi analyser les values du board, et faire des sous-dictionnaires par values, comme ça on filtre tous les sous dictionnaires n'ayant pas les bonnes values...
 
 # pour optimiser la fonction espérance de primiera
 pour l'instant la fonction utilise la force brute pour regarder toutes les combinaisons possibles de distribution des cartes entre les 2 joueurs, la seule optimisation est d'ignorer les cartes inférieures aux 2 max des joueurs car elles sont neutres pour la primiera 
