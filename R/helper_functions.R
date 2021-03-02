@@ -132,6 +132,22 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 # TakeableCardsOnBoardOptimized("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)))
 # TakeableCardsOnBoardBruteForce("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)), boundary = 6)
 
+#' List All Possible Decisions
+#'
+#' @param game_state
+#' @param player
+#'
+ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
+                                     player = 1) {
+  cards <- game_state[[paste0("player", player)]]$hand
+  board <- game_state$board
+  possible_decision <- list()
+  for (card in cards) { # maybe it can be optimized with vectorization instead of list
+    possible_decision <- c(possible_decision, lapply(TakeableCardsOnBoardOptimized(card, board), function(l)
+      list(Play = card, Take = l)))
+  }
+  return(possible_decision)
+}
 
 #' Give Other Player
 #' If input is 1 return 2
