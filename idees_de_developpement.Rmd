@@ -61,17 +61,33 @@ On peut aussi choisir de contraindre les choix aux mouvements autorisés.
 Il serait utile d'étudier au moins par une simulation la distribution des scores pour différentes stratégies, afin de juger de la variabilité et de la difficulté d'optimiser des décisions en milieu aléatoire
 
 # Faire une fonction Décision Possible Rapide
-Utiliser le dictionnaire universel des (play, take) pour réduire les possibilités et lister toutes les (play, take) associées à un hand et un board -> pour chaque play possible, restreindre le dictionnaire à ce play, mais même comme ça la recherche peut être encore longue car plus de 1000 possibilités pour un 10 -> soit on vérifie pour tous les takes associés si les cartes sont sur le board (all take %in% board), soit on trouve un moyen de restreindre la recherche à partir de l'info des cartes qui sont sur le board. Par exemple on peut faire des sous-dictionnaires redondants selon chacune des cartes présentes (donc pour takeable_dict[[D6]] on met des sous-entrées pour [[B1]], [[C1]], … jusqu'à [[S6]]). On peut aussi, pour chaque play envisagé, filtrer du board toutes les cartes ayant une valeur supérieure, et aussi faire la condition que s'il existe une carte de la même valeur on est obligé de la choisir avant d'explorer le reste. -> ces 2 mesures simples devraient rendre l'énumération rapide dès que le play n'est pas trop grand. On peut aussi analyser les values du board, et faire des sous-dictionnaires par values, comme ça on filtre tous les sous dictionnaires n'ayant pas les bonnes values...
+Utiliser le dictionnaire universel des (play, take) pour réduire les possibilités et lister toutes les (play, take) associées à un hand et un board 
+-> pour chaque play possible, restreindre le dictionnaire à ce play, mais même comme ça la recherche peut être encore longue car plus de 1000 possibilités pour un 10 
+-> soit on vérifie pour tous les takes associés si les cartes sont sur le board (all take %in% board), soit on trouve un moyen de restreindre la recherche à partir de l'info des cartes qui sont sur le board.
+Par exemple on peut faire des sous-dictionnaires redondants selon chacune des cartes présentes (donc pour takeable_dict[[D6]] on met des sous-entrées pour [[B1]], [[C1]], … jusqu'à [[S6]]).
+On peut aussi, pour chaque play envisagé, filtrer du board toutes les cartes ayant une valeur supérieure, et aussi faire la condition que s'il existe une carte de la même valeur on est obligé de la choisir avant d'explorer le reste. 
+-> ces 2 mesures simples devraient rendre l'énumération rapide dès que le play n'est pas trop grand.
+On peut aussi analyser les values du board, et faire des sous-dictionnaires par values, comme ça on filtre tous les sous dictionnaires n'ayant pas les bonnes values...
 
 # pour optimiser la fonction espérance de primiera
-pour l'instant la fonction utilise la force brute pour regarder toutes les combinaisons possibles de distribution des cartes entre les 2 joueurs, la seule optimisation est d'ignorer les cartes inférieures aux 2 max des joueurs car elles sont neutres pour la primiera -> c'est très long à calculer, donc on peut essayer de partitionner selon qui prend le max de chaque couleur -> si c'est 1 (1 chance sur 2), on calcule pour le 2 sur les cartes restantes privées du max. Inversement si c'est 2… -> voir si on arrive à trouver la formule exacte en posant le problème comme ça avec des arbres…
+pour l'instant la fonction utilise la force brute pour regarder toutes les combinaisons possibles de distribution des cartes entre les 2 joueurs, la seule optimisation est d'ignorer les cartes inférieures aux 2 max des joueurs car elles sont neutres pour la primiera 
+-> c'est très long à calculer, donc on peut essayer de partitionner selon qui prend le max de chaque couleur 
+-> si c'est 1 (1 chance sur 2), on calcule pour le 2 sur les cartes restantes privées du max. 
+Inversement si c'est 2… 
+-> voir si on arrive à trouver la formule exacte en posant le problème comme ça avec des arbres…
 
 # espérance scopa
-Il faut faire une espérance de la scopa qui dépend de hand1, board et les probabilités de hand2 (dépendantes du deck restant) + décision -> cette espérance doit pousser à scoper, mais aussi à ne pas se faire scoper (par exemple en jouant une carte qui fait atteindre un board > 10 ou en laissant sur le board une somme dont on sait que l'other ne peut pas l'avoir car elles sont toutes tombées)
+Il faut faire une espérance de la scopa qui dépend de hand1, board et les probabilités de hand2 (dépendantes du deck restant) + décision 
+-> cette espérance doit pousser à scoper, mais aussi à ne pas se faire scoper 
+(par exemple en jouant une carte qui fait atteindre un board > 10 ou en laissant sur le board une somme dont on sait que l'other ne peut pas l'avoir car elles sont toutes tombées)
 
 # faire une fonction espérance de la décision et faire un joueur optimisateur
-espérance(décision, stack1, stack2, board, deck) prenant en compte les 4 points (cards, denari, sette bello et primiera) et les scope -> on pourrait faire un joueur qui évalue toutes les décisions possibles et choisit celle qui optimise cette espérance (on peut éventuellement choisir de donner des poids différents aux différentes composantes)
-Certaines décisions ne font pas bouger l'espérance de (cards, denari, sette bello et primiera), par exemple quand il n'y a pas de take possible ou quand on take une carte déjà déterminée (par exemple un denari quand on a déjà 21 cartes et 6 denari dont le 7). -> on peut optimiser en fonction de l'espérance de se faire scoper (soit avec le score exact d'espérance scopa, soit en choisissant simplement le play qui génère le plus petit board > 10) ou bien on peut essayer de minimiser l'espérance de (board + deck) pour empêcher le other de gagner des coups au point suivant
+espérance(décision, stack1, stack2, board, deck) prenant en compte les 4 points (cards, denari, sette bello et primiera) et les scope 
+-> on pourrait faire un joueur qui évalue toutes les décisions possibles et choisit celle qui optimise cette espérance (on peut éventuellement choisir de donner des poids différents aux différentes composantes)
+Certaines décisions ne font pas bouger l'espérance de (cards, denari, sette bello et primiera), 
+par exemple quand il n'y a pas de take possible ou quand on take une carte déjà déterminée (par exemple un denari quand on a déjà 21 cartes et 6 denari dont le 7). 
+-> on peut optimiser en fonction de l'espérance de se faire scoper (soit avec le score exact d'espérance scopa, soit en choisissant simplement le play qui génère le plus petit board > 10) 
+ou bien on peut essayer de minimiser l'espérance de (board + deck) pour empêcher le other de gagner des coups au point suivant
 A terme on peut imaginer faire un jouer un player qui apprend contre un other qui optimise, et faire en sorte qu'il apprenne à gagner malgré l'optimisation du other.
 
 # décisions intéressantes 
