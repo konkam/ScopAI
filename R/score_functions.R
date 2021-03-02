@@ -114,7 +114,7 @@ GiveSetteBelloScoreForAPlayer <- function(stack_player) {
 #' @param player 1 or 2 depending on the player
 #'
 GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
-  other_player <- GiveOtherPlayer(player)
+  other_player <- SwitchPlayer(player)
   player_data <- game_state[[GetPlayerName(player)]]
   other_data <- game_state[[GetPlayerName(other_player)]]
   sum(
@@ -414,8 +414,8 @@ GiveExpectedScoreForADecision <- function(game_state = InitialiseGameState(seed 
   if (check_for_validity) IsADecisionValid(game_state, player, decision)
 
   game_state <- PlayCard(game_state, player, decision)
-  pla <- paste0("player", player)
-  other <- paste0("player", GiveOtherPlayer(player))
+  pla <- GetPlayerName(player)
+  other <- GetPlayerName(SwitchPlayer(player))
   stack_player <- game_state[[pla]]$stack
   stack_other <- game_state[[other]]$stack
 

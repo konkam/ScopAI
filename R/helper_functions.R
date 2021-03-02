@@ -139,7 +139,7 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 #'
 ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
                                      player = 1) {
-  cards <- game_state[[paste0("player", player)]]$hand
+  cards <- GetPlayerHand(game_state = game_state, player = player)
   board <- game_state$board
   possible_decision <- list()
   for (card in cards) { # maybe it can be optimized with vectorization instead of list
@@ -149,12 +149,4 @@ ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
   return(possible_decision)
 }
 
-#' Give Other Player
-#' If input is 1 return 2
-#' If input is 2 return 1
-#'
-#' @param player
-#'
-GiveOtherPlayer <- function(player = 1) {
-  player %% 2 + 1
-}
+
