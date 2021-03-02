@@ -132,3 +132,13 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 # TakeableCardsOnBoardOptimized("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)))
 # TakeableCardsOnBoardBruteForce("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)), boundary = 6)
 
+
+#' Give Other Player
+#' If input is 1 return 2
+#' If input is 2 return 1
+#'
+#' @param player
+#'
+GiveOtherPlayer <- function(player = 1) {
+  player %% 2 + 1
+}

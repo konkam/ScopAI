@@ -30,3 +30,8 @@ test_that("Cards allowed for the taking with the quick function", {
   expect_equal(TakeableCardsOnBoardOptimized("B10", c("D9", "S9", "B2")) %>% unlist(), "none")
   expect_equal(TakeableCardsOnBoardOptimized("B4", c("D1", "S1", "B1", "C1")) %>% unlist(), c("B1", "C1", "D1", "S1"))
 })
+
+test_that("The function to switch players works", {
+  expect_equal(GiveOtherPlayer(1), 2)
+  expect_equal(GiveOtherPlayer(2), 1)
+})
