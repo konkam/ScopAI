@@ -20,6 +20,14 @@ GetPlayerHand <- function(game_state, player) {
   game_state[[GetPlayerName(player)]]$hand
 }
 
+GetPlayerStack <- function(game_state, player) {
+  game_state[[GetPlayerName(player)]]$stack
+}
+
+GetPlayerScope <- function(game_state, player) {
+  game_state[[GetPlayerName(player)]]$scope
+}
+
 AllSubsetsWithCombn <- function(cards, boundary = length(cards)) {
   if (length(cards) == 0) {
     return(return(character(0)))
