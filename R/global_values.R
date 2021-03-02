@@ -39,8 +39,6 @@ deck_as_named_values <- setNames(
 play_take_dict <- vector(mode = "list", length = length(ordered_deck))
 names(play_take_dict) <- ordered_deck
 
-# I've commented all the following part because when I install the package
-# there is a problem with the function TakeableCardsOnBoardBruteForce not being defined (don't understand why)
 # eventually we should run the commented script and then save the dictionary somewhere,
 # and reload it when loading the package (it is 5 Mb large)
 
@@ -67,12 +65,17 @@ for (played_card in ordered_deck) {
   }
   play_take_dict[[played_card]] <- c("none", play_take_dict[[played_card]])
   play_take_dict[[played_card]] <- play_take_dict[[played_card]] %>%
-    .[!duplicated(.)]
+    .[!duplicated(.)] %>%
+    purrr::discard(is.null)
   # there are duplicated because the partition is not perfect
   # indeed we don't force the takeables cards to include the highest
+  # Also, for some reason, cards with values higher than 5 have a NULL value in addition to their "none" value
+  # use purrr::discard(is.null) to remove them
 }
-#
-# # what if you take only into consideration Denari or not (use sort to avoid redondance)
+
+
+
+# what if you take only into consideration Denari or not (use sort to avoid redondance)
 # play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)
 #   unique(lapply(card, function(take) sort(sub("[BCS]", "no_D", take)))))
 #
@@ -83,13 +86,13 @@ for (played_card in ordered_deck) {
 #
 # if (F) {
 #   # number of combinations play / take
-#   sapply(play_take_dict, length) # max is 1699 for Re (10)
-#   sapply(play_take_dict, length) %>% sum() # 16208
+#   sapply(play_take_dict, length) # max is 1698 for Re (10)
+#   sapply(play_take_dict, length) %>% sum() # 16184
 #
-#   sapply(play_take_dict_denari_or_not, length) # max is 188 for Re (10)
-#   sapply(play_take_dict_denari_or_not, length) %>% sum() # 2214
+#   sapply(play_take_dict_denari_or_not, length) # max is 187 for Re (10)
+#   sapply(play_take_dict_denari_or_not, length) %>% sum() # 2190
 #
-#   sapply(play_take_dict_only_values, length) # max is 35 for Re (10)
-#   sapply(play_take_dict_only_values, length) %>% sum() # 532
+#   sapply(play_take_dict_only_values, length) # max is 34 for Re (10)
+#   sapply(play_take_dict_only_values, length) %>% sum() # 508
 # }
-#
+

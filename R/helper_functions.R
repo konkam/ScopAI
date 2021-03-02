@@ -97,22 +97,38 @@ TakeableCardsOnBoardBruteForce <- function(card, board, boundary = length(board)
   }
 }
 
+#' Takeable Cards On Board Optimized
+#' Take advantage of the play / take dictionary to give a quick list of
+#' possible takes considering a played card and the board
+#' Warning: the order of the possible takes may be different from the order of the board since it uses the dictionnary
+#'
+#' @param card
+#' @param board
+#'
+#'
+TakeableCardsOnBoardOptimized <- function(card, board) {
+  board_values <- GetValuesOfCards(board)
+  card_value <- GetValueOfCard(card)
 
-# LookWhichCardsYouCanGetOnBoard <- function(one_card, board) {
-#   one_card_value <- GetValuesOfCards(one_card)
-#   board_with_values <- setNames(
-#     object = GetValuesOfCards(board),
-#     nm = board
-#   )
-#   # don't consider cards on the board that are higher than your card
-#   board_with_values <- board_with_values[board_with_values <= one_card_value]
-#   take_opportunities <- vector()
-#   for (i in 1:length(board_with_values)) {
-#     for (combination in combn(board_with_values, i, simplify = F)) {
-#       if (sum(combination) == one_card_value) {
-#         take_opportunities[[i]] <- names(combination)
-#       }
-#     }
-#   }
-#   return(take_opportunities)
-# }
+  # check if one card of the board matches the value of the card played
+  matching_value <- which(board_values == card_value)
+  if (length(matching_value)) {
+    return(as.list(board[matching_value]))
+  }
+  # restrict to cards with lower values
+  board <- board[board_values < card_value]
+  if (length(board) == 0) return("none")
+
+  # restrict to possible takes with this played card (with the dictionnary)
+  restricted_takes <- play_take_dict[[card]]
+  for (i in length(restricted_takes):1) { # count backwards because you remove some parts of the list
+    if (any(!restricted_takes[[i]] %in% board)) restricted_takes <- restricted_takes[-i]
+  }
+  if (length(restricted_takes) == 0) return("none")
+  return(restricted_takes)
+}
+
+# It is indeed quicker -> look at this example with the played being a 10 and the board being the whole deck without the 10s
+# TakeableCardsOnBoardOptimized("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)))
+# TakeableCardsOnBoardBruteForce("D10", setdiff(ordered_deck, paste0(c("C", "D", "B", "S"), 10)), boundary = 6)
+
