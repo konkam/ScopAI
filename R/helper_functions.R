@@ -147,11 +147,11 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 #'
 ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
                                      player = 1) {
-  cards <- GetPlayerHand(game_state = game_state, player = player)
-  board <- game_state$board
+
   possible_decision <- list()
-  for (card in cards) { # maybe it can be optimized with vectorization instead of list
-    possible_decision <- c(possible_decision, lapply(TakeableCardsOnBoardOptimized(card, board), function(l)
+  # maybe the loop can be optimized with vectorization
+  for (card in GetPlayerHand(game_state = game_state, player = player)) {
+    possible_decision <- c(possible_decision, lapply(TakeableCardsOnBoardOptimized(card, game_state$board), function(l)
       list(Play = card, Take = l)))
   }
   return(possible_decision)
