@@ -89,8 +89,14 @@ ou bien on peut essayer de minimiser l'espérance de (board + deck) pour empêch
 A terme on peut imaginer faire un jouer un player qui apprend contre un other qui optimise, et faire en sorte qu'il apprenne à gagner malgré l'optimisation du other.
 
 # décisions intéressantes 
-1. on a en main un D7 et un 8, il y a sur le board un 5, 2, 1 -> utilise-t-on le D7 pour gagner le sette bello ou le 8 pour scoper -> ça devrait dépendre de la probabilité qu'other ait un 1 pour scoper derrière, entre autres choses
+1. on a en main un D7 et un 8, il y a sur le board un 5, 2, 1 -> utilise-t-on le D7 pour gagner le sette bello ou le 8 pour scoper
+2-> ça devrait dépendre de la probabilité qu'other ait un 1 pour scoper derrière, entre autres choses
 
-2. c'est la dernière donne, il y a un roi sur la table et on a le dernier roi en main. La logique est de le jouer en 3ème pour assurer le dernier pli, mais l'optimisation de l'espérance peut pousser à le jouer en premier -> prendre en compte dans l'espérance le fait de faire le dernier pli
+2. c'est la dernière donne, il y a un roi sur la table et on a le dernier roi en main.
+La logique est de le jouer en 3ème pour assurer le dernier pli, mais l'optimisation de l'espérance peut pousser à le jouer en premier -> prendre en compte dans l'espérance le fait de faire le dernier pli
 
 3. Voir si le joueur apprend à jouer une carte <=3 alors qu'il y a un 7 sur la table en prenant en compte la protection par une figure (par exemple jouer un 1 car on sait que le 7 est protégé par un 8)
+
+# Attention au set seed
+Quand on fait un ShuffleNewDeck ou un InitialiseGameState avec un Seed non NULL, est-ce que ça fige le seed uniquement au sein de la fonction ou bien pour tout le reste ?
+Si c'est pour tout le reste c'est problématique parce aque tous les sample() utilisés après seront seedés...
