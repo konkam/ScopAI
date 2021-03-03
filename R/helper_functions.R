@@ -145,8 +145,8 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 #' @param game_state
 #' @param player
 #'
-ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
-                                     player = 1) {
+ListAllPossibleDecisions <- function(game_state,
+                                     player ) {
 
   possible_decision <- list()
   # maybe the loop can be optimized with vectorization

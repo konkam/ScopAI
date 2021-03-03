@@ -39,7 +39,7 @@ RandomDecision <- function(game_state, player) {
   return(list(play = play, take = take))
 }
 
-RandomDecisionOptimized <- function(game_state = InitialiseGameState(seed = 1), player = 1) {
+RandomDecisionOptimized <- function(game_state, player) {
   ListAllPossibleDecisions(game_state, player) %>% sample(size = 1) %>% .[[1]]
 }
 
