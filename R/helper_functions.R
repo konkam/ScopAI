@@ -166,3 +166,6 @@ ShowHandsAndBoard <- function(game_state = InitialiseGameState(seed = 1)) {
   print(glue::glue("the hand of player 1 is {paste(GetPlayerHand(game_state, 1), collapse = ' ')}\n the hand of player 2 is {paste(GetPlayerHand(game_state, 2), collapse = ' ')}\n                   the board is {paste(game_state$board, collapse = ' ')}"))
 }
 
+SortAccordingToGame <- function(cards) {
+  cards[order(factor(cards, levels = ordered_deck))]
+}
