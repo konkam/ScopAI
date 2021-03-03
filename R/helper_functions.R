@@ -157,4 +157,12 @@ ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
   return(possible_decision)
 }
 
+#' Show Hands And Board
+#' For Human reader
+#'
+#' @param game_state
+#'
+ShowHandsAndBoard <- function(game_state = InitialiseGameState(seed = 1)) {
+  print(glue::glue("the hand of player 1 is {paste(GetPlayerHand(game_state, 1), collapse = ' ')}\n the hand of player 2 is {paste(GetPlayerHand(game_state, 2), collapse = ' ')}\n                   the board is {paste(game_state$board, collapse = ' ')}"))
+}
 
