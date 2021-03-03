@@ -42,7 +42,7 @@ InitialiseGameState <- function(seed = NULL, starting_player = 1) {
     deck = ShuffleNewDeck(seed),
     player1 = list(hand = c(), stack = c(), scope = 0),
     player2 = list(hand = c(), stack = c(), scope = 0),
-    turn = 0, last_taker = NULL
+    turn = 1, last_taker = NULL
   ) %>%
     DealPlayersCards(starting_player = starting_player) %>%
     DealBoardCards()
