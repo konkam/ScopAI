@@ -5,7 +5,7 @@ test_that("give me that vitamin D", {
 test_that("get the right hand", {
   g <- InitialiseGameState(seed = 1)
   expect_equal(GetPlayerHand(game_state = g, player = 1), c("B1", "B4", "S9"))
-  expect_equal(GetPlayerHand(game_state = g, player = 2), c("S4", "D3", "C4"))
+  expect_equal(GetPlayerHand(game_state = g, player = 2), c("C4", "D3", "S4"))
 })
 
 test_that("Combination functions work", {
