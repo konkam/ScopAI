@@ -103,3 +103,51 @@ Quand on fait un ShuffleNewDeck ou un InitialiseGameState avec un Seed non NULL,
 Si c'est pour tout le reste c'est problématique parce aque tous les sample() utilisés après seront seedés...
 Regarder par exemple les fonctions RandomDecisionOptimized et RandomDecision:
 on dirait que quand on réapplique plusieurs fois la fonction avec un seed ça sort la même chose à chaque fois alors qu'il y a plusieurs options en principe
+
+# Arranger toutes les cartes
+Il me semble que si à tout moment, les cartes sont triées, ça permettrait de diminuer le champ des possibles du jeu grâce aux symétries (puisque l'ordre des cartes dans une main ou un stack n'importe pas)
+Par exemple, ajouter dans PlayCard() et DealCard() un sort() pour le nouveau stack(), le nouveau board(), … Et vérifier que les éléments des dictionnaires sont bien sortés (en particulier play_take_dict)
+
+# Nombre de decks possibles
+Il me semble que c'est C(4, 40) x C(3, 36) x C(3, 33) x … x C(3, 3) = C(4, 40) x 36! / (6^12) = 1.6e37… ça fait beaucoup ! Masi ça reste moins que 40! = 8.2e47 si on ne prenait pas en compte les symétries des mains !
+
+# Faire une fonction PossibleHandOfOther()
+- en input, game_state et player
+- en output, toutes les mains possibles pour l'adversaire en prenant en compte le nombre de cartes qu'il a en main et les cartes "inconnues" qui sont le deck + la hand de l'adversaire (noté possible_deck)
+-> cela dépend s'il a 1, 2 ou 3 cartes en main 
+-> disons qu'il a x cartes en mains
+-> il faut retourner combn(possible_deck, m = x) 
+-> il y a x parmi length(possible_deck) possibilités, soit au maximum 3 parmi 33 = 5456 possibilités de hand
+
+# Stratégies pour le joueur optimiseur
+On peut imaginer diverses stratégies :
+1) le joueur optimise l'espérance de la nième décision, et en cas d'égalité entre différentes décisions il utilise une fonction déterministe pour trancher. Par exemple, laisser le plus petit board possible supérieur à 10. Et/ou ne pas poser de Denari, ou ne pas poser de 7.
+2) le joueur optimise espérance(nième décision) - espérance(n+1ème décision pour other)
+3) le joueur optimise esp(n) - esp(n+1) + esp(n+2) - esp(n+3) + …
+
+Notons possible_deck = union(deck, other$hand)
+Pour la stratégie numéro 2, plusieurs possibilités pour optimiser l'espérance du player, sachant qu'on ne connait pas ses cartes :
+a) méthode du vrai calcul : faire la moyenne des scores de l'adversaire en fonction de toutes les combinaisons de cartes qu'il pourrait avoir (avec la fonction PossibleHandOfOther)
+-> pour chacune de ces hands, considérer que l'adversaire optimise à 1 coup, et choisir l'espérance dans ce cas, et faire la moyenne des espérances.
+-> c'est plus long à calculer quand l'adversaire a 3 cartes en mains, et c'est plus rapide à calculer quand le jeu avance (maximum 5456 combinaison au premier calcul)
+-> quand l'adversaire a une seule carte en main, cette méthode est aussi rapide que les autres donc autant l'utiliser ; 
+quand il a 2 cartes en mains, il y a au max 2 parmi 33 = 528 combinaisons
+b) méthode qui envisage le pire : optimiser l'espérance du joueur comme s'il avait en main tout le possible_deck
+-> c’est-à-dire optimiser les expected scores de toutes les décisions possibles si le game_state$other$hand était égal au possible_deck
+-> autrement dit, on considère le pire scénario possible, le cas où l'adversaire aurait la meilleure carte à jouer possible
+-> il y a length(possible_deck) calculs à faire, donc maximum 33
+c) méthode de l'adversaire au hasard : faire la moyenne des scores de l'adversaire en fonction des length(possible_deck) cartes restantes, équiprobablement 
+-> ça permet de limiter le nombre de calcul (max 33 au premier tour) mais ce n'est pas très réaliste car l'adversaire qui a 3 cartes en mains ne va pas les jouer au hasard.
+Ce n'est pas non plus une random décision parce que le play est laissé au hasard mais le take est optimisé.
+d) compromis entre les méthodes b) et c) : entre le scénario du pire et le scénario ou l'adversaire joue ses cartes au hasard,
+on peut mettre des probas tout en limitant le nombre de calculs à 33 au max : 
+-> exemple, dans le cas où l'adversaire a 3 cartes en main :
+- on classe tous les scores possibles avec toutes les cartes du possible_deck,
+- on fait une moyenne pondérée en mettant un poids 3 au tiers numéro 1, poids 2 au tiers numéro 2, poids 1 au tiers numéro 3 
+-> on se dit que l'adversaire a une plus grande probabilité de jouer des bonnes cartes que des mauvaises car dans sa main à 3 cartes il a des chances d'en avoir une au moins bonne
+-> si par contre le joueur a 2 cartes en main, on peut diviser en tiers 1 / tiers 2 avec poids 1.5 et 1 (par exemple)
+-> si il a une carte en main on fait le choix équiprobable puisqu'il est vrai
+e) méthode du joueur omniscient : c'est de la triche, mais si on veut créer un joueur très dur à battre contre qui apprendre, on peut le faire jouer en sachant les cartes de l'adversaire -> il optimise espérance(n) - espérance(n+1) avec les vraies infos de la hand de l'adversaire pour n+1 
+-> le calcul est beaucoup plus rapide, et il permet d'implémenter rapidement la stratégie numéro 3 qui calcule toutes les probas jusqu'au bout (et peut prendre en compte le last take).
+-> on peut même le faire un peut récursivement pour calculer les espérances de n, n+1, n+2... en considérant que other est aussi un omniscient qui calcule à plusieurs coups...
+
