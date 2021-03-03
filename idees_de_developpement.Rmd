@@ -78,6 +78,7 @@ Inversement si c'est 2…
 Il faut faire une espérance de la scopa qui dépend de hand1, board et les probabilités de hand2 (dépendantes du deck restant) + décision 
 -> cette espérance doit pousser à scoper, mais aussi à ne pas se faire scoper 
 (par exemple en jouant une carte qui fait atteindre un board > 10 ou en laissant sur le board une somme dont on sait que l'other ne peut pas l'avoir car elles sont toutes tombées)
+pour l'instant l'espècrance scopa ne prend pas en compte la proba d'être scopée en fonction des cartes restantes...
 
 # faire une fonction espérance de la décision et faire un joueur optimisateur
 espérance(décision, stack1, stack2, board, deck) prenant en compte les 4 points (cards, denari, sette bello et primiera) et les scope 
