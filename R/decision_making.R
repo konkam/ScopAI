@@ -38,6 +38,67 @@ RandomDecision <- function(game_state, player) {
   return(list(play = play, take = take))
 }
 
+RandomDecisionOptimized <- function(game_state = InitialiseGameState(seed = 1), player = 1) {
+  ListAllPossibleDecisions(game_state, player) %>% sample(size = 1) %>% .[[1]]
+}
+
+OptimizedDecision <- function(game_state,
+                              player = 1,
+                              if_equality_min_risk_of_scopa = T,
+                              cards_weight = 1,
+                              primiera_weight = 1,
+                              sette_bello_weight = 1,
+                              denari_weight = 1,
+                              scope_weight = 1,
+                              explain = F) {
+  if (explain) print(glue::glue("the hand of the player is {paste(GetPlayerHand(game_state, player), collapse = ' ')}\n the board is {paste(game_state$board, collapse = ' ')}"))
+  # list the possible decisions
+  possible_decisions <- ListAllPossibleDecisions(game_state = game_state, player = player)
+
+  # compute the expected score for each decision
+  expected_scores <- sapply(possible_decisions, function(dec)
+    GiveExpectedScoreForADecision(game_state = game_state, player = player, decision = dec,
+                                  cards_weight = cards_weight,
+                                  primiera_weight = primiera_weight,
+                                  sette_bello_weight = sette_bello_weight,
+                                  denari_weight = denari_weight,
+                                  scope_weight = scope_weight))
+
+  # take the highest expected scores
+  optimized_decisions <- possible_decisions[expected_scores == max(expected_scores)]
+  if (explain) print(glue::glue("thehighest expected score is {round(max(expected_scores), 2)}"))
+
+  # if there is only one choose it
+  if (length(optimized_decisions) == 1) return(optimized_decisions[[1]])
+
+  # otherwise, you can play at random
+  if (!if_equality_min_risk_of_scopa) return(sample(optimized_decisions, 1)[[1]])
+
+  # this loop is really not good, it should be fixed when the NULL / "none" discrepancy is fixed
+  for (i in 1:length(optimized_decisions)) {
+    if ("none" %in% optimized_decisions[[i]]$take) optimized_decisions[[i]] <- list(play = optimized_decisions[[i]]$play,
+                                                                                  take = NULL)
+  }
+  if (explain) print("there are different decisions possibles with the same expected score")
+  # or you can try to minimize the risk of scopa
+  # start by getting the board value for each decision
+  new_board_values <- sapply(optimized_decisions, function(dec)
+    GetSumValuesOfCards(PlayCard(game_state = game_state, player = player, dec)$board))
+  # order the decisions according to this value
+  optimized_decisions <- optimized_decisions[order(new_board_values)]
+  new_board_values <- sort(new_board_values)
+
+  # if there is at least one decision leaving the board higher than 10, restrict to it and then play the lowest remaining board with []
+  if (new_board_values[length(new_board_values)] > 10) {
+    if (explain) print("took a decision allowing to have a board higher than 10 (anti-scopa)")
+    return(optimized_decisions[new_board_values > 10][[1]])
+  }
+
+  if (explain) print("took a decision giving the lowest remaining board")
+  # otherwise just play for the lowest remaining board
+  return(optimized_decisions[[1]])
+}
+
 DummyDecision <- function(game_state, player) {
   play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
   take <- c("B1")

@@ -413,6 +413,7 @@ GiveExpectedScoreForADecision <- function(game_state = InitialiseGameState(seed 
                                           scope_weight = 1) {
   if (check_for_validity) IsADecisionValid(game_state, player, decision)
 
+  if ("none" %in% decision$take) decision$take <- NULL
   game_state <- PlayCard(game_state, player, decision)
   stack_player <- GetPlayerStack(game_state, player)
   stack_other <- GetPlayerStack(game_state, SwitchPlayer(player))
@@ -421,7 +422,5 @@ GiveExpectedScoreForADecision <- function(game_state = InitialiseGameState(seed 
     denari_weight*GiveDenariExpectedScoreForAPlayer(stack_player, stack_other) +
     # primiera_weight*GivePrimieraExpectedScoreForAPlayer(stack_player, stack_other) + # for now it is commented because it is not optimized, gives a memory error
     sette_bello_weight*GiveSetteBelloExpectedScoreForAPlayer(stack_player, stack_other) +
-    scope_weight*GetPlayerScope(player)
+    scope_weight*GetPlayerScope(game_state, player)
 }
-
-
