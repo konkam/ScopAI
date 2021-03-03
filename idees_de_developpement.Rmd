@@ -100,3 +100,5 @@ La logique est de le jouer en 3ème pour assurer le dernier pli, mais l'optimisa
 # Attention au set seed
 Quand on fait un ShuffleNewDeck ou un InitialiseGameState avec un Seed non NULL, est-ce que ça fige le seed uniquement au sein de la fonction ou bien pour tout le reste ?
 Si c'est pour tout le reste c'est problématique parce aque tous les sample() utilisés après seront seedés...
+Regarder par exemple les fonctions RandomDecisionOptimized et RandomDecision:
+on dirait que quand on réapplique plusieurs fois la fonction avec un seed ça sort la même chose à chaque fois alors qu'il y a plusieurs options en principe
