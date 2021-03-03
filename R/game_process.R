@@ -77,31 +77,24 @@ DealPlayersCards <- function(game_state, starting_player) {
 #'
 #' @return
 #'
-PlayCard <- function(game_state, player, decision) {
+PlayCard <- function(game_state, player, decision, check_for_validity =  F) {
   if (player != 1 && player != 2) {
     stop(print("starting_player should be 1 or 2"))
   }
-  if (player == 1) {
-    game_state$player1$hand <- game_state$player1$hand[game_state$player1$hand != decision$play]
-    if (length(decision$take) > 0) {
-      game_state$player1$stack <- c(game_state$player1$stack, decision$play, decision$take)
-      game_state$board <- game_state$board[!game_state$board %in% decision$take]
-      game_state$last_taker <- 1
-      if (length(game_state$board) == 0 & game_state$turn < 36) game_state$player1$scope <- game_state$player1$scope + 1
-    } else {
-      game_state$board <- c(game_state$board, decision$play)
-    }
+
+  if (check_for_validity) IsADecisionValid(game_state, player, decision)
+
+  pla <- GetPlayerName(player)
+  game_state[[pla]]$hand <- game_state[[pla]]$hand[game_state[[pla]]$hand != decision$play]
+  if (length(decision$take) > 0) {
+    game_state[[pla]]$stack <- c(game_state[[pla]]$stack, decision$play, decision$take) %>% SortAccordingToGame()
+    game_state$board <- game_state$board[!game_state$board %in% decision$take]
+    game_state$last_taker <- player
+    if (length(game_state$board) == 0 & game_state$turn < 36) game_state[[pla]]$scope <- game_state[[pla]]$scope + 1
   } else {
-    game_state$player2$hand <- game_state$player2$hand[game_state$player2$hand != decision$play]
-    if (length(decision$take) > 0) {
-      game_state$player2$stack <- c(game_state$player2$stack, decision$play, decision$take)
-      game_state$board <- game_state$board[!game_state$board %in% decision$take]
-      game_state$last_taker <- 2
-      if (length(game_state$board) == 0 & game_state$turn < 36) game_state$player2$scope <- game_state$player2$scope + 1
-    } else {
-      game_state$board <- c(game_state$board, decision$play)
-    }
+    game_state$board <- c(game_state$board, decision$play) %>% SortAccordingToGame()
   }
+
   game_state$turn <- game_state$turn + 1
   return(game_state)
 }
