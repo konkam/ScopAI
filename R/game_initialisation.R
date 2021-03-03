@@ -8,7 +8,14 @@ ShuffleNewDeck <- function(seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
-  sample(ordered_deck, size = length(ordered_deck), replace = F)
+  s_deck <- sample(ordered_deck, size = length(ordered_deck), replace = F)
+    c(SortAccordingToGame(s_deck[1:4]), SortAccordingToGame(s_deck[5:7]),
+      SortAccordingToGame(s_deck[8:10]), SortAccordingToGame(s_deck[11:13]),
+      SortAccordingToGame(s_deck[14:16]), SortAccordingToGame(s_deck[17:19]),
+      SortAccordingToGame(s_deck[20:22]), SortAccordingToGame(s_deck[23:25]),
+      SortAccordingToGame(s_deck[26:28]), SortAccordingToGame(s_deck[29:31]),
+      SortAccordingToGame(s_deck[32:34]), SortAccordingToGame(s_deck[35:37]),
+      SortAccordingToGame(s_deck[38:40]))
 }
 
 #' Title
