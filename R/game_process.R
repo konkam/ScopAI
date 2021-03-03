@@ -26,7 +26,9 @@ RunGame <- function(starting_player, DecisionFunction, seed = 1) {
     # print(length(game_state$deck))
 
     while (length(GetPlayerHand(game_state, current_player)) > 0) {
-      game_state <- PlayCard(game_state = game_state, player = current_player, decision = DecisionFunction(game_state, current_player))
+      game_state <- PlayCard(game_state = game_state,
+                             player = current_player,
+                             decision = DecisionFunction(game_state, current_player))
       current_player <- SwitchPlayer(current_player)
       game_states[[game_state$turn]] <- game_state
     }
@@ -35,7 +37,9 @@ RunGame <- function(starting_player, DecisionFunction, seed = 1) {
   # print(length(game_state$deck))
   game_state <- FinishGame(game_state = game_state)
   # At the end of the game, people have NAs in their hands
-  return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1), score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2), game_history = game_states))
+  return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1),
+              score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2),
+              game_history = game_states))
 }
 
 #' Title
