@@ -63,17 +63,12 @@ for (played_card in ordered_deck) {
     play_take_dict[[played_card]] <- c(play_take_dict[[played_card]],
                                        combinations_with_this_highest_card)
   }
-  play_take_dict[[played_card]] <- c("none", play_take_dict[[played_card]])
+  play_take_dict[[played_card]] <- c(list(NULL), play_take_dict[[played_card]])
   play_take_dict[[played_card]] <- play_take_dict[[played_card]] %>%
-    .[!duplicated(.)] %>%
-    purrr::discard(is.null)
+    .[!duplicated(.)]
   # there are duplicated because the partition is not perfect
   # indeed we don't force the takeables cards to include the highest
-  # Also, for some reason, cards with values higher than 5 have a NULL value in addition to their "none" value
-  # use purrr::discard(is.null) to remove them
 }
-
-
 
 # what if you take only into consideration Denari or not (use sort to avoid redondance)
 # play_take_dict_denari_or_not <- lapply(play_take_dict, function(card)

@@ -125,14 +125,14 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
   }
   # restrict to cards with lower values
   board <- board[board_values < card_value]
-  if (length(board) == 0) return("none")
+  if (length(board) == 0) return(NULL)
 
   # restrict to possible takes with this played card (with the dictionnary)
   restricted_takes <- play_take_dict[[card]]
   for (i in length(restricted_takes):1) { # count backwards because you remove some parts of the list
     if (any(!restricted_takes[[i]] %in% board)) restricted_takes <- restricted_takes[-i]
   }
-  if (length(restricted_takes) == 0) return("none")
+  if (length(restricted_takes) == 0) return(NULL)
   return(restricted_takes)
 }
 

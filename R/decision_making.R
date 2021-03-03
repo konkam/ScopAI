@@ -5,7 +5,7 @@
 IsADecisionPossible <- function(decision) {
   if (length(decision) != 2) stop("decision has not the good format (list of length 2)")
   if (any(sort(names(decision)) != c("play", "take"))) stop("decision has not the good format (named list with play / take)")
-  if (!"none" %in% decision$take) {
+  if (!is.null(decision$take)) {
     if (GetSumValuesOfCards(decision$take) != GetValueOfCard(decision$play)) stop("the played card value doesn't match the taken cards")
   }
 }
@@ -20,15 +20,16 @@ IsADecisionValid <- function(game_state = InitialiseGameState(seed = 1),
                              player = 1,
                              decision) {
   IsADecisionPossible(decision)
-  if (!decision$play %in% game_state[[paste0("player", player)]]$hand) stop("the card played is not in the hand of the player")
-  if (any(!decision$take %in% c(game_state$board, "none"))) stop("some of the cards taken are not on the board")
+  if (!decision$play %in% GetPlayerHand(game_state, player)) stop("the card played is not in the hand of the player")
+  if (any(!decision$take %in% game_state$board)) stop("some of the cards taken are not on the board")
   if (any(GetValuesOfCards(game_state$board) == GetValueOfCard(decision$play)) &
       length(decision$take) > 1) stop("at least one card on the board matches the value of the play, you cannot take several card")
-  if ("none" %in% decision$take) {
-    if (any(unlist(TakeableCardsOnBoardOptimized(decision$play,
-                                                 game_state$board)) != "none")) stop("you have to take cards if it is possible")
+  if (is.null(decision$take)) {
+    if (any(!is.null(unlist(TakeableCardsOnBoardOptimized(decision$play,
+                                                          game_state$board))))) stop("you have to take cards if it is possible")
   }
 }
+
 
 RandomDecision <- function(game_state, player) {
   play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
@@ -51,7 +52,7 @@ OptimizedDecision <- function(game_state,
                               denari_weight = 1,
                               scope_weight = 1,
                               explain = F) {
-  if (explain) print(glue::glue("the hand of the player is {paste(GetPlayerHand(game_state, player), collapse = ' ')}\n the board is {paste(game_state$board, collapse = ' ')}"))
+  if (explain) ShowHandsAndBoard(game_state)
   # list the possible decisions
   possible_decisions <- ListAllPossibleDecisions(game_state = game_state, player = player)
 
@@ -66,7 +67,7 @@ OptimizedDecision <- function(game_state,
 
   # take the highest expected scores
   optimized_decisions <- possible_decisions[expected_scores == max(expected_scores)]
-  if (explain) print(glue::glue("thehighest expected score is {round(max(expected_scores), 2)}"))
+  if (explain) print(glue::glue("the highest expected score is {round(max(expected_scores), 2)}"))
 
   # if there is only one choose it
   if (length(optimized_decisions) == 1) return(optimized_decisions[[1]])
@@ -74,11 +75,6 @@ OptimizedDecision <- function(game_state,
   # otherwise, you can play at random
   if (!if_equality_min_risk_of_scopa) return(sample(optimized_decisions, 1)[[1]])
 
-  # this loop is really not good, it should be fixed when the NULL / "none" discrepancy is fixed
-  for (i in 1:length(optimized_decisions)) {
-    if ("none" %in% optimized_decisions[[i]]$take) optimized_decisions[[i]] <- list(play = optimized_decisions[[i]]$play,
-                                                                                  take = NULL)
-  }
   if (explain) print("there are different decisions possibles with the same expected score")
   # or you can try to minimize the risk of scopa
   # start by getting the board value for each decision
