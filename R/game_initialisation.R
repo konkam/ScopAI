@@ -9,13 +9,13 @@ ShuffleNewDeck <- function(seed = NULL) {
     set.seed(seed)
   }
   s_deck <- sample(ordered_deck, size = length(ordered_deck), replace = F)
-    c(SortAccordingToGame(s_deck[1:4]), SortAccordingToGame(s_deck[5:7]),
-      SortAccordingToGame(s_deck[8:10]), SortAccordingToGame(s_deck[11:13]),
-      SortAccordingToGame(s_deck[14:16]), SortAccordingToGame(s_deck[17:19]),
-      SortAccordingToGame(s_deck[20:22]), SortAccordingToGame(s_deck[23:25]),
-      SortAccordingToGame(s_deck[26:28]), SortAccordingToGame(s_deck[29:31]),
-      SortAccordingToGame(s_deck[32:34]), SortAccordingToGame(s_deck[35:37]),
-      SortAccordingToGame(s_deck[38:40]))
+    c(SortAccordingToGame(s_deck[1:3]), SortAccordingToGame(s_deck[4:6]), # first deal
+      SortAccordingToGame(s_deck[7:10]), # first board
+      SortAccordingToGame(s_deck[11:13]), SortAccordingToGame(s_deck[14:16]), # second deal
+      SortAccordingToGame(s_deck[17:19]), SortAccordingToGame(s_deck[20:22]), # third deal
+      SortAccordingToGame(s_deck[23:25]), SortAccordingToGame(s_deck[26:28]), # fourth deal
+      SortAccordingToGame(s_deck[29:31]), SortAccordingToGame(s_deck[32:34]), # fifth deal
+      SortAccordingToGame(s_deck[35:37]), SortAccordingToGame(s_deck[38:40])) # last deal
 }
 
 #' Title
