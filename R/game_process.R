@@ -150,6 +150,7 @@ DealPlayersCards <- function(game_state, starting_player) {
 #' @param game_state A list containing the game state at this turn
 #' @param player 1 or 2 according to which player plays
 #' @param decision A list (play = card_played, take = cards_taken)
+#' @param check_for_validity TRUE or FALSE. Adds a check for validity of the played card
 #'
 #' A decision is a list(play = card played, a single card, take = cards taken.)
 #'
