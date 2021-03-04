@@ -34,12 +34,12 @@ RandomDecision <- function(game_state, player) {
   play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
   take <- TakeableCardsOnBoardBruteForce(card = play, board = game_state$board) %>%
     sample(size = 1) %>%
-    .[[1]]
+    first
   return(list(play = play, take = take))
 }
 
 RandomDecisionOptimized <- function(game_state = InitialiseGameState(seed = 1), player = 1) {
-  ListAllPossibleDecisions(game_state, player) %>% sample(size = 1) %>% .[[1]]
+  ListAllPossibleDecisions(game_state, player) %>% sample(size = 1) %>% first
 }
 
 OptimizedDecision <- function(game_state,

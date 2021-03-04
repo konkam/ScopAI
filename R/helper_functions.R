@@ -158,3 +158,4 @@ ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
 }
 
 
+first = function(x) x[[1]]
