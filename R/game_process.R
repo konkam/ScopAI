@@ -160,6 +160,10 @@ PlayCard <- function(game_state, player, decision, check_for_validity =  F) {
     stop(print("starting_player should be 1 or 2"))
   }
 
+  if (length(GetPlayerHand(game_state, player)) < length(GetPlayerHand(game_state, SwitchPlayer(player)))) {
+    stop(print("the current player should have at least as much cards as the other player"))
+  }
+
   if (check_for_validity) IsADecisionValid(game_state, player, decision)
 
   pla <- GetPlayerName(player)
@@ -176,6 +180,11 @@ PlayCard <- function(game_state, player, decision, check_for_validity =  F) {
   game_state$turn <- game_state$turn + 1
   return(game_state)
 }
+
+PlayARandomCard <- function(game_state, player) {
+  PlayCard(game_state, player, RandomDecision(game_state, player))
+}
+
 
 FinishGame <- function(game_state) {
   if (game_state$last_taker == 1) {
