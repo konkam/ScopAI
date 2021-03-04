@@ -98,9 +98,10 @@ res %>%
   ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 ```
 
-
 On dirait qu'il faut 150-200 parties pour que les estimateurs de score se stabilisent.
 
+=======
+>>>>>>> bf7f6f62ea8543d98e2acdd31b2c1a975d62daf0
 ```{r}
 res2 = res %>% 
   mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),

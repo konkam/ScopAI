@@ -129,6 +129,9 @@ et de la difficulté d’optimiser des décisions en milieu aléatoire
 On dirait qu’il faut 150-200 parties pour que les estimateurs de score
 se stabilisent.
 
+======= &gt;&gt;&gt;&gt;&gt;&gt;&gt;
+bf7f6f62ea8543d98e2acdd31b2c1a975d62daf0
+
     res2 = res %>% 
       mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
              score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
