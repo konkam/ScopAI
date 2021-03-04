@@ -257,6 +257,14 @@ RandomDecision: on dirait que quand on réapplique plusieurs fois la
 fonction avec un seed ça sort la même chose à chaque fois alors qu’il y
 a plusieurs options en principe
 
+> > Réponse: lorsqu’on appelle la fonction set.seed(), on change une
+> > variable globale pour tout R. Du coup toutes les fonctions sample
+> > appelées ensuite sont seedées. Si c’est un phénomène problématique,
+> > il est possible de 1) sauvegarder l’état actuel du générateur
+> > aléatoire 2) seeder et générer le deck 3) restaurer l’état du
+> > générateur à partir de la sauvegarde Sinon, il faut seeder les
+> > choses avec économie…
+
 Arranger toutes les cartes
 ==========================
 

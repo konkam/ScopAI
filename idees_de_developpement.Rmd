@@ -183,6 +183,9 @@ Si c'est pour tout le reste c'est problématique parce aque tous les sample() ut
 Regarder par exemple les fonctions RandomDecisionOptimized et RandomDecision:
 on dirait que quand on réapplique plusieurs fois la fonction avec un seed ça sort la même chose à chaque fois alors qu'il y a plusieurs options en principe
 
+>> Réponse: lorsqu'on appelle la fonction set.seed(), on change une variable globale pour tout R. Du coup toutes les fonctions sample appelées ensuite sont seedées. Si c'est un phénomène problématique, il est possible de 1) sauvegarder l'état actuel du générateur aléatoire 2) seeder et générer le deck 3) restaurer l'état du générateur à partir de la sauvegarde
+>> Sinon, il faut seeder les choses avec économie...
+
 # Arranger toutes les cartes
 Il me semble que si à tout moment, les cartes sont triées, ça permettrait de diminuer le champ des possibles du jeu grâce aux symétries (puisque l'ordre des cartes dans une main ou un stack n'importe pas)
 Par exemple, ajouter dans PlayCard() et DealCard() un sort() pour le nouveau stack(), le nouveau board(), … Et vérifier que les éléments des dictionnaires sont bien sortés (en particulier play_take_dict)
