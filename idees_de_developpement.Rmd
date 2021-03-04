@@ -11,6 +11,8 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ```{r, include=FALSE}
 library(ScopAI)
+library(tidyverse)
+library(parallel)
 ```
 
 
@@ -59,6 +61,67 @@ On peut aussi choisir de contraindre les choix aux mouvements autorisés.
 # Distribution des scores
 
 Il serait utile d'étudier au moins par une simulation la distribution des scores pour différentes stratégies, afin de juger de la variabilité et de la difficulté d'optimiser des décisions en milieu aléatoire
+
+```{r}
+Compute1Score = function(starting_player = 1, DecisionFunction = ScopAI:::DummyDecision){
+  g = RunGame(starting_player = starting_player, DecisionFunction = DecisionFunction)
+  tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
+}
+ComputeScores = function(seed = 1, DecisionFunction = ScopAI:::DummyDecision, ngames = 7*3, nprocs = 7){
+  set.seed(seed = seed, kind = "L'Ecuyer-CMRG")
+  # mclapply(X = 1:ngames, FUN = function(x) Compute1Score(starting_player = starting_player, DecisionFunction = DecisionFunction), mc.set.seed = T, mc.preschedule = T, mc.cores = nprocs, SIMPLIFY = F) %>%
+  # bind_rows()
+    lapply(X = 1:ngames, FUN = function(x) bind_rows(Compute1Score(starting_player = 1, DecisionFunction = DecisionFunction), Compute1Score(starting_player = 2, DecisionFunction = DecisionFunction))) %>%
+    bind_rows()
+}
+```
+
+```{r}
+
+res = ComputeScores(ngames = 7*20, seed = 2) %>% 
+  mutate(score_diff = score_player_1-score_player_2) %>% 
+  mutate(moving_average_score_1 = cummean(score_player_1),
+         moving_average_score_2 = cummean(score_player_2),
+         moving_average_score_diff = cummean(score_diff))
+
+```
+```{r}
+res %>% 
+  mutate(game_idx = seq_along(score_diff)) %>% 
+  gather(variable, value, moving_average_score_1:moving_average_score_diff) %>% 
+  ggplot(aes(x = game_idx, y = value, colour = variable)) + 
+  theme_bw() +
+  geom_line() +
+  ylab("Moving average score") +
+  xlab("Nombre de parties") + 
+  scale_colour_discrete(name ='', labels = c("Joueur 1", "Joueur 2", "Différence")) + 
+  ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
+```
+
+```{r}
+res2 = res %>% 
+  mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
+         score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
+  mutate(score_diff = score_premier_joueur-score_deuxieme_joueur) %>% 
+  mutate(moving_average_score_premier = cummean(score_premier_joueur),
+         moving_average_score_deuxieme = cummean(score_deuxieme_joueur),
+         moving_average_score_diff = cummean(score_diff))
+```
+
+```{r}
+res2 %>% 
+  mutate(game_idx = seq_along(score_diff)) %>% 
+  gather(variable, value, c(moving_average_score_premier, moving_average_score_deuxieme, moving_average_score_diff)) %>% 
+  ggplot(aes(x = game_idx, y = value, colour = variable)) + 
+  theme_bw() +
+  geom_line() +
+  ylab("Moving average score") +
+  xlab("Nombre de parties") + 
+  scale_colour_discrete(name ='', labels = c("Premier joueur", "Deuxième joueur", "Différence")) + 
+  ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
+```
+Le premier joueur semble avantagé !
+
 
 # Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
 Cette fonction utilise le dictionnaire universel des (play, take) pour réduire les possibilités et lister tous les 'take' associés à un play et un board 
