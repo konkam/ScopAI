@@ -80,6 +80,7 @@ AllSubsets <- function(cards, boundary = length(cards)) {
     return(AllSubsetsWithGenerator(cards))
   }
   else {
+    boundary = min(boundary, length(cards)) #otherwise run into problems when calling combn with m > n
     return(AllSubsetsWithCombn(cards, boundary))
   }
 }
