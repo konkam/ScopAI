@@ -8,6 +8,16 @@
 -   [Idées pour l’apprentissage](#idées-pour-lapprentissage)
     -   [Apprentissage des règles](#apprentissage-des-règles)
 -   [Distribution des scores](#distribution-des-scores)
+-   [Si jamais on voulait optimiser encore plus la fonction Décision
+    Possible Rapide
+    (TakeableCardsOnBoardOptimized)](#si-jamais-on-voulait-optimiser-encore-plus-la-fonction-décision-possible-rapide-takeablecardsonboardoptimized)
+-   [pour optimiser la fonction espérance de
+    primiera](#pour-optimiser-la-fonction-espérance-de-primiera)
+-   [espérance scopa](#espérance-scopa)
+-   [faire une fonction espérance de la décision et faire un joueur
+    optimisateur](#faire-une-fonction-espérance-de-la-décision-et-faire-un-joueur-optimisateur)
+-   [décisions intéressantes](#décisions-intéressantes)
+-   [Attention au set seed](#attention-au-set-seed)
 
 Intro
 =====
@@ -78,3 +88,93 @@ Distribution des scores
 Il serait utile d’étudier au moins par une simulation la distribution
 des scores pour différentes stratégies, afin de juger de la variabilité
 et de la difficulté d’optimiser des décisions en milieu aléatoire
+
+Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
+===============================================================================================================
+
+Cette fonction utilise le dictionnaire universel des (play, take) pour
+réduire les possibilités et lister tous les ‘take’ associés à un play et
+un board -&gt; même comme ça la recherche peut être encore longue car
+plus de 1000 possibilités pour un 10 -&gt; on peut chercher un moyen de
+restreindre la recherche à partir de l’info des cartes qui sont sur le
+board. Par exemple on peut faire des sous-dictionnaires redondants selon
+chacune des cartes présentes (donc pour takeable\_dict\[\[D6\]\] on met
+des sous-entrées pour \[\[B1\]\], \[\[C1\]\], … jusqu’à \[\[S6\]\]).
+-&gt; On peut aussi analyser les values du board, et faire des
+sous-dictionnaires par values, comme ça on filtre tous les sous
+dictionnaires n’ayant pas les bonnes values…
+
+pour optimiser la fonction espérance de primiera
+================================================
+
+pour l’instant la fonction utilise la force brute pour regarder toutes
+les combinaisons possibles de distribution des cartes entre les 2
+joueurs, la seule optimisation est d’ignorer les cartes inférieures aux
+2 max des joueurs car elles sont neutres pour la primiera -&gt; c’est
+très long à calculer, donc on peut essayer de partitionner selon qui
+prend le max de chaque couleur -&gt; si c’est 1 (1 chance sur 2), on
+calcule pour le 2 sur les cartes restantes privées du max. Inversement
+si c’est 2… -&gt; voir si on arrive à trouver la formule exacte en
+posant le problème comme ça avec des arbres…
+
+espérance scopa
+===============
+
+Il faut faire une espérance de la scopa qui dépend de hand1, board et
+les probabilités de hand2 (dépendantes du deck restant) + décision -&gt;
+cette espérance doit pousser à scoper, mais aussi à ne pas se faire
+scoper (par exemple en jouant une carte qui fait atteindre un board &gt;
+10 ou en laissant sur le board une somme dont on sait que l’other ne
+peut pas l’avoir car elles sont toutes tombées) pour l’instant
+l’espècrance scopa ne prend pas en compte la proba d’être scopée en
+fonction des cartes restantes…
+
+faire une fonction espérance de la décision et faire un joueur optimisateur
+===========================================================================
+
+espérance(décision, stack1, stack2, board, deck) prenant en compte les 4
+points (cards, denari, sette bello et primiera) et les scope -&gt; on
+pourrait faire un joueur qui évalue toutes les décisions possibles et
+choisit celle qui optimise cette espérance (on peut éventuellement
+choisir de donner des poids différents aux différentes composantes)
+Certaines décisions ne font pas bouger l’espérance de (cards, denari,
+sette bello et primiera), par exemple quand il n’y a pas de take
+possible ou quand on take une carte déjà déterminée (par exemple un
+denari quand on a déjà 21 cartes et 6 denari dont le 7). -&gt; on peut
+optimiser en fonction de l’espérance de se faire scoper (soit avec le
+score exact d’espérance scopa, soit en choisissant simplement le play
+qui génère le plus petit board &gt; 10) ou bien on peut essayer de
+minimiser l’espérance de (board + deck) pour empêcher le other de gagner
+des coups au point suivant A terme on peut imaginer faire un jouer un
+player qui apprend contre un other qui optimise, et faire en sorte qu’il
+apprenne à gagner malgré l’optimisation du other.
+
+décisions intéressantes
+=======================
+
+1.  on a en main un D7 et un 8, il y a sur le board un 5, 2, 1 -&gt;
+    utilise-t-on le D7 pour gagner le sette bello ou le 8 pour scoper
+    2-&gt; ça devrait dépendre de la probabilité qu’other ait un 1 pour
+    scoper derrière, entre autres choses
+
+2.  c’est la dernière donne, il y a un roi sur la table et on a le
+    dernier roi en main. La logique est de le jouer en 3ème pour assurer
+    le dernier pli, mais l’optimisation de l’espérance peut pousser à le
+    jouer en premier -&gt; prendre en compte dans l’espérance le fait de
+    faire le dernier pli
+
+3.  Voir si le joueur apprend à jouer une carte &lt;=3 alors qu’il y a
+    un 7 sur la table en prenant en compte la protection par une figure
+    (par exemple jouer un 1 car on sait que le 7 est protégé par un 8)
+
+Attention au set seed
+=====================
+
+Quand on fait un ShuffleNewDeck ou un InitialiseGameState avec un Seed
+non NULL, est-ce que ça fige le seed uniquement au sein de la fonction
+ou bien pour tout le reste ? Si c’est pour tout le reste c’est
+problématique parce aque tous les sample() utilisés après seront seedés…
+Regarder par exemple les fonctions RandomDecisionOptimized et
+RandomDecision: on dirait que quand on réapplique plusieurs fois la
+fonction avec un seed ça sort la même chose à chaque fois alors qu’il y
+a plusieurs options en principe
