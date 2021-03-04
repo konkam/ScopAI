@@ -105,7 +105,7 @@ et de la difficulté d’optimiser des décisions en milieu aléatoire
     }
     ComputeScores = function(seed = 1, DecisionFunction = ScopAI:::RandomDecision, ngames = 7*3, nprocs = 7){
       set.seed(seed = seed, kind = "L'Ecuyer-CMRG")
-      mclapply(X = 1:ngames,
+      parallel::mclapply(X = 1:ngames,
                FUN = function(x) bind_rows(Compute1Score(starting_player = 1, DecisionFunction = DecisionFunction), Compute1Score(starting_player = 2, DecisionFunction = DecisionFunction)),
                mc.set.seed = T,
                mc.preschedule = T,
@@ -135,7 +135,7 @@ et de la difficulté d’optimiser des décisions en milieu aléatoire
 
 ![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
-On dirait qu’il faut 150-200 parties pour que les estimateurs de score
+On dirait qu’il faut 400-500 parties pour que les estimateurs de score
 se stabilisent.
 
 Performance de joueurs
@@ -144,7 +144,7 @@ Performance de joueurs
 Joueur aléatoire: le deuxième joueur est un peu avantagé
 --------------------------------------------------------
 
-    res2 = ComputeScores(ngames = 7*50, seed = 1) %>% 
+    res2 = ComputeScores(ngames = 7*80, seed = 3) %>% 
       mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
              score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
       mutate(score_diff = score_premier_joueur-score_deuxieme_joueur) %>% 
