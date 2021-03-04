@@ -35,3 +35,7 @@ test_that("The function to switch players works", {
   expect_equal(SwitchPlayer(1), 2)
   expect_equal(SwitchPlayer(2), 1)
 })
+
+test_that("For any game, there are 5456 possibilities for a player's hand if you don't know it", {
+  expect_equal(length(GetPossibleHandOfAPlayer(InitialiseGameState(), 2)), 5456)
+})

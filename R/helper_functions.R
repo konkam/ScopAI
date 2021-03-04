@@ -171,3 +171,8 @@ ShowHandsAndBoard <- function(game_state = InitialiseGameState(seed = 1)) {
 SortAccordingToGame <- function(cards) {
   cards[order(factor(cards, levels = ordered_deck))]
 }
+
+GetPossibleHandOfAPlayer <- function(game_state, player_to_guess_the_hand) {
+  true_hand_of_player <- GetPlayerHand(game_state, player_to_guess_the_hand)
+  combn(union(game_state$deck, true_hand_of_player), m = length(true_hand_of_player), simplify = F)
+}
