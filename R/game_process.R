@@ -17,7 +17,7 @@
 #'
 #' @export
 #'
-RunGame <- function(starting_player, DecisionFunction, seed = 1) {
+RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
   game_state <- InitialiseGameState(seed = seed)
   current_player <- starting_player
   game_states <- list()
