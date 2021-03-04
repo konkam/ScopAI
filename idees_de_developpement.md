@@ -8,6 +8,10 @@
 -   [Idées pour l’apprentissage](#idées-pour-lapprentissage)
     -   [Apprentissage des règles](#apprentissage-des-règles)
 -   [Distribution des scores](#distribution-des-scores)
+-   [Performance de joueurs](#performance-de-joueurs)
+    -   [Joueur aléatoire: le deuxième joueur est un peu
+        avantagé](#joueur-aléatoire-le-deuxième-joueur-est-un-peu-avantagé)
+    -   [](#section)
 -   [Si jamais on voulait optimiser encore plus la fonction Décision
     Possible Rapide
     (TakeableCardsOnBoardOptimized)](#si-jamais-on-voulait-optimiser-encore-plus-la-fonction-décision-possible-rapide-takeablecardsonboardoptimized)
@@ -45,8 +49,8 @@ sur un scénario réalise en utilisant:
     ## Unit: milliseconds
     ##                                                                               expr
     ##  RunGame(seed = 1, starting_player = 1, DecisionFunction = ScopAI:::DummyDecision)
-    ##       min       lq    mean   median       uq      max neval
-    ##  1.397774 1.598101 1.86987 1.729464 1.936592 4.894424   100
+    ##       min       lq     mean   median       uq      max neval
+    ##  3.688212 4.026866 4.670242 4.342771 4.669327 10.29162   100
 
 Tant que deux fonctions de décision prennent les mêmes décisions elles
 seront évaluées sur la même série de cartes.
@@ -95,19 +99,24 @@ Il serait utile d’étudier au moins par une simulation la distribution
 des scores pour différentes stratégies, afin de juger de la variabilité
 et de la difficulté d’optimiser des décisions en milieu aléatoire
 
-    Compute1Score = function(starting_player = 1, DecisionFunction = ScopAI:::DummyDecision){
+    Compute1Score = function(starting_player = 1, DecisionFunction = ScopAI:::RandomDecision){
       g = RunGame(starting_player = starting_player, DecisionFunction = DecisionFunction)
       tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
     }
-    ComputeScores = function(seed = 1, DecisionFunction = ScopAI:::DummyDecision, ngames = 7*3, nprocs = 7){
+    ComputeScores = function(seed = 1, DecisionFunction = ScopAI:::RandomDecision, ngames = 7*3, nprocs = 7){
       set.seed(seed = seed, kind = "L'Ecuyer-CMRG")
-      # mclapply(X = 1:ngames, FUN = function(x) Compute1Score(starting_player = starting_player, DecisionFunction = DecisionFunction), mc.set.seed = T, mc.preschedule = T, mc.cores = nprocs, SIMPLIFY = F) %>%
-      # bind_rows()
-        lapply(X = 1:ngames, FUN = function(x) bind_rows(Compute1Score(starting_player = 1, DecisionFunction = DecisionFunction), Compute1Score(starting_player = 2, DecisionFunction = DecisionFunction))) %>%
-        bind_rows()
+      mclapply(X = 1:ngames,
+               FUN = function(x) bind_rows(Compute1Score(starting_player = 1, DecisionFunction = DecisionFunction), Compute1Score(starting_player = 2, DecisionFunction = DecisionFunction)),
+               mc.set.seed = T,
+               mc.preschedule = T,
+               mc.cores = nprocs) %>%
+      bind_rows()
+        # lapply(X = 1:ngames,
+        #        FUN = function(x) bind_rows(Compute1Score(starting_player = 1, DecisionFunction = DecisionFunction), Compute1Score(starting_player = 2, DecisionFunction = DecisionFunction))) %>%
+        # bind_rows()
     }
 
-    res = ComputeScores(ngames = 7*20, seed = 2) %>% 
+    res = ComputeScores(ngames = 7*50, seed = 1) %>% 
       mutate(score_diff = score_player_1-score_player_2) %>% 
       mutate(moving_average_score_1 = cummean(score_player_1),
              moving_average_score_2 = cummean(score_player_2),
@@ -129,10 +138,13 @@ et de la difficulté d’optimiser des décisions en milieu aléatoire
 On dirait qu’il faut 150-200 parties pour que les estimateurs de score
 se stabilisent.
 
-======= &gt;&gt;&gt;&gt;&gt;&gt;&gt;
-bf7f6f62ea8543d98e2acdd31b2c1a975d62daf0
+Performance de joueurs
+======================
 
-    res2 = res %>% 
+Joueur aléatoire: le deuxième joueur est un peu avantagé
+--------------------------------------------------------
+
+    res2 = ComputeScores(ngames = 7*50, seed = 1) %>% 
       mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
              score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
       mutate(score_diff = score_premier_joueur-score_deuxieme_joueur) %>% 
@@ -148,12 +160,12 @@ bf7f6f62ea8543d98e2acdd31b2c1a975d62daf0
       geom_line() +
       ylab("Moving average score") +
       xlab("Nombre de parties") + 
-      scale_colour_discrete(name ='', labels = c("Premier joueur", "Deuxième joueur", "Différence")) + 
+      scale_colour_discrete(name ='', labels = c("Deuxième joueur", "Différence", "Premier joueur")) + 
       ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 
 ![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
-Le premier joueur semble avantagé !
+Le deuxième joueur semble avantagé !
 
 Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
 ===============================================================================================================
