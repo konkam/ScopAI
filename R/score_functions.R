@@ -413,7 +413,6 @@ GiveExpectedScoreForADecision <- function(game_state = InitialiseGameState(seed 
                                           scope_weight = 1) {
   if (check_for_validity) IsADecisionValid(game_state, player, decision)
 
-  if ("none" %in% decision$take) decision$take <- NULL
   game_state <- PlayCard(game_state, player, decision)
   stack_player <- GetPlayerStack(game_state, player)
   stack_other <- GetPlayerStack(game_state, SwitchPlayer(player))

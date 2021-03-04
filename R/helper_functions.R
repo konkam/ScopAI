@@ -125,14 +125,14 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
   }
   # restrict to cards with lower values
   board <- board[board_values < card_value]
-  if (length(board) == 0) return("none")
+  if (length(board) == 0) return(NULL)
 
   # restrict to possible takes with this played card (with the dictionnary)
   restricted_takes <- play_take_dict[[card]]
   for (i in length(restricted_takes):1) { # count backwards because you remove some parts of the list
     if (any(!restricted_takes[[i]] %in% board)) restricted_takes <- restricted_takes[-i]
   }
-  if (length(restricted_takes) == 0) return("none")
+  if (length(restricted_takes) == 0) return(NULL)
   return(restricted_takes)
 }
 
@@ -145,17 +145,40 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
 #' @param game_state
 #' @param player
 #'
-ListAllPossibleDecisions <- function(game_state = InitialiseGameState(seed = 1),
-                                     player = 1) {
+ListAllPossibleDecisions <- function(game_state,
+                                     player ) {
 
   possible_decision <- list()
   # maybe the loop can be optimized with vectorization
-  for (card in GetPlayerHand(game_state = game_state, player = player)) {
-    possible_decision <- c(possible_decision, lapply(TakeableCardsOnBoardOptimized(card, game_state$board), function(l)
+  for (card in GetPlayerHand(game_state, player)) {
+    cards_to_take <- TakeableCardsOnBoardOptimized(card, game_state$board)
+    if (is.null(cards_to_take)) possible_decision <- c(possible_decision, list(list(play = card, take = NULL)))
+    possible_decision <- c(possible_decision, lapply(cards_to_take, function(l)
       list(play = card, take = l)))
   }
   return(possible_decision)
 }
 
+#' Show Hands And Board
+#' For Human reader
+#'
+#' @param game_state
+#'
+ShowHandsAndBoard <- function(game_state = InitialiseGameState(seed = 1)) {
+  print(glue::glue("the hand of player 1 is {paste(GetPlayerHand(game_state, 1), collapse = ' ')}\n the hand of player 2 is {paste(GetPlayerHand(game_state, 2), collapse = ' ')}\n                   the board is {paste(game_state$board, collapse = ' ')}"))
+}
 
 first = function(x) x[[1]]
+  
+SortAccordingToGame <- function(cards) {
+  cards[order(factor(cards, levels = ordered_deck))]
+}
+
+GetPossibleCardsInHandOfAPlayer <- function(game_state, player_to_guess_the_hand) {
+  union(game_state$deck, GetPlayerHand(game_state, player_to_guess_the_hand))
+}
+
+GetPossibleHandsOfAPlayer <- function(game_state, player_to_guess_the_hand) {
+  true_hand_of_player <- GetPlayerHand(game_state, player_to_guess_the_hand)
+  combn(union(game_state$deck, true_hand_of_player), m = length(true_hand_of_player), simplify = F)
+}

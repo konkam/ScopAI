@@ -8,7 +8,14 @@ ShuffleNewDeck <- function(seed = NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
-  sample(ordered_deck, size = length(ordered_deck), replace = F)
+  s_deck <- sample(ordered_deck, size = length(ordered_deck), replace = F)
+    c(SortAccordingToGame(s_deck[1:3]), SortAccordingToGame(s_deck[4:6]), # first deal
+      SortAccordingToGame(s_deck[7:10]), # first board
+      SortAccordingToGame(s_deck[11:13]), SortAccordingToGame(s_deck[14:16]), # second deal
+      SortAccordingToGame(s_deck[17:19]), SortAccordingToGame(s_deck[20:22]), # third deal
+      SortAccordingToGame(s_deck[23:25]), SortAccordingToGame(s_deck[26:28]), # fourth deal
+      SortAccordingToGame(s_deck[29:31]), SortAccordingToGame(s_deck[32:34]), # fifth deal
+      SortAccordingToGame(s_deck[35:37]), SortAccordingToGame(s_deck[38:40])) # last deal
 }
 
 #' Title
@@ -35,7 +42,7 @@ InitialiseGameState <- function(seed = NULL, starting_player = 1) {
     deck = ShuffleNewDeck(seed),
     player1 = list(hand = c(), stack = c(), scope = 0),
     player2 = list(hand = c(), stack = c(), scope = 0),
-    turn = 0, last_taker = NULL
+    turn = 1, last_taker = NULL
   ) %>%
     DealPlayersCards(starting_player = starting_player) %>%
     DealBoardCards()
