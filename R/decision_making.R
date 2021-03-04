@@ -16,8 +16,8 @@ IsADecisionPossible <- function(decision) {
 #' @param player
 #' @param decision
 #'
-IsADecisionValid <- function(game_state = InitialiseGameState(seed = 1),
-                             player = 1,
+IsADecisionValid <- function(game_state,
+                             player,
                              decision) {
   IsADecisionPossible(decision)
   if (!decision$play %in% GetPlayerHand(game_state, player)) stop("the card played is not in the hand of the player")
@@ -42,9 +42,10 @@ RandomDecision <- function(game_state, player) {
 RandomDecisionOptimized <- function(game_state, player) {
   ListAllPossibleDecisions(game_state, player) %>% sample(size = 1) %>% .[[1]]
 }
+# According to microbenchmark, RandomDecisionOptimized is actually longer than RandomDecision :)
 
 OptimizedDecision <- function(game_state,
-                              player = 1,
+                              player,
                               if_equality_min_risk_of_scopa = T,
                               cards_weight = 1,
                               primiera_weight = 1,
