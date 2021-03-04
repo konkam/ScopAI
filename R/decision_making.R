@@ -123,7 +123,9 @@ OptimizedDecisionNPlus1 <- function(game_state,
                                   denari_weight = denari_weight,
                                   scope_weight = scope_weight))
 
-  if (option_for_n_plus_1 == "cheater") {
+  expected_scores_n_plus_1 <- rep(0, length(possible_decisions))
+
+  if (option_for_n_plus_1 == "cheater" & game_state <= 36) {
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
       other_player <- SwitchPlayer(player)
