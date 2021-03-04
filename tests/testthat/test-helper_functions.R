@@ -32,6 +32,6 @@ test_that("Cards allowed for the taking with the quick function", {
 })
 
 test_that("The function to switch players works", {
-  expect_equal(GiveOtherPlayer(1), 2)
-  expect_equal(GiveOtherPlayer(2), 1)
+  expect_equal(SwitchPlayer(1), 2)
+  expect_equal(SwitchPlayer(2), 1)
 })
