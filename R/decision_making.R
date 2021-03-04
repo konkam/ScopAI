@@ -103,14 +103,16 @@ OptimizedDecision <- function(game_state,
 
 OptimizedDecisionNPlus1 <- function(game_state,
                                     player,
-                                    option_for_n_plus_1 = c("cheater", "worst_case_scenario", "random_play", "true_calculus", "ponderated_scenario")[1],
+                                    option_for_n_plus_1 = c("cheater", "worst_case_scenario",
+                                                            "random_play", "true_calculus",
+                                                            "ponderated_scenario",
+                                                            "true_if_not_too_much")[1],
                                     cards_weight = 1,
                                     primiera_weight = 1,
                                     sette_bello_weight = 1,
                                     denari_weight = 1,
-                                    scope_weight = 1,
-                                    explain = F) {
-  if (explain) ShowHandsAndBoard(game_state)
+                                    scope_weight = 1) {
+
   # list the possible decisions
   possible_decisions <- ListAllPossibleDecisions(game_state = game_state, player = player)
 
@@ -124,11 +126,21 @@ OptimizedDecisionNPlus1 <- function(game_state,
                                   scope_weight = scope_weight))
 
   expected_scores_n_plus_1 <- rep(0, length(possible_decisions))
+  other_player <- SwitchPlayer(player)
 
-  if (option_for_n_plus_1 == "cheater" & game_state <= 36) {
+  # if true_if_not_too_much, don't do the true calculus for combinations of 3 with a possible deck too big
+  # to avoid to have choose(33, 3) = more than 500 combinations
+  # but when the hand is 2 it is maximum 500 combinations
+  # and when the hand is 3 but the deck is less than 12 it is max 455 combinations
+  if (option_for_n_plus_1 == "true_if_not_too_much") {
+    option_for_n_plus_1 <- ifelse(length(GetPlayerHand(game_state, other_player)) == 3 & length(game_state$deck > 12),
+                                  "ponderated_scenario",
+                                  "true_calculus")
+  }
+
+  if (option_for_n_plus_1 == "cheater" & game_state$turn <= 36) {
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
-      other_player <- SwitchPlayer(player)
       GiveExpectedScoreForADecision(game_state = game_state_after_dec,
                                     player = other_player,
                                     decision = OptimizedDecision(game_state_after_dec,
@@ -148,6 +160,122 @@ OptimizedDecisionNPlus1 <- function(game_state,
     }
     )
   }
+
+  if (option_for_n_plus_1 == "worst_case_scenario" & game_state$turn <= 36) {
+    possible_hands <- GetPossibleCardsInHandOfAPlayer(game_state, other_player)
+    expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
+      game_state_after_dec <- PlayCard(game_state, player, dec)
+      sapply(possible_hands, function(this_hand) {
+        game_state_with_this_hand <- game_state_after_dec
+        game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
+        GiveExpectedScoreForADecision(game_state = game_state_with_this_hand,
+                                      player = other_player,
+                                      decision = OptimizedDecision(game_state_with_this_hand,
+                                                                   other_player,
+                                                                   if_equality_min_risk_of_scopa = T,
+                                                                   cards_weight = cards_weight,
+                                                                   primiera_weight = primiera_weight,
+                                                                   sette_bello_weight = sette_bello_weight,
+                                                                   denari_weight = denari_weight,
+                                                                   scope_weight = scope_weight,
+                                                                   explain = F),
+                                      cards_weight = cards_weight,
+                                      primiera_weight = primiera_weight,
+                                      sette_bello_weight = sette_bello_weight,
+                                      denari_weight = denari_weight,
+                                      scope_weight = scope_weight)
+      }) %>% max() # end of the sapply on the possible_hands
+    }) # end of sapply on the possible_decisions
+  } # end of the if statement (worst_case_scenario)
+
+  if (option_for_n_plus_1 == "random_play" & game_state$turn <= 36) {
+    possible_hands <- GetPossibleCardsInHandOfAPlayer(game_state, other_player)
+    expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
+      game_state_after_dec <- PlayCard(game_state, player, dec)
+      sapply(possible_hands, function(this_hand) {
+        game_state_with_this_hand <- game_state_after_dec
+        game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
+        GiveExpectedScoreForADecision(game_state = game_state_with_this_hand,
+                                      player = other_player,
+                                      decision = OptimizedDecision(game_state_with_this_hand,
+                                                                   other_player,
+                                                                   if_equality_min_risk_of_scopa = T,
+                                                                   cards_weight = cards_weight,
+                                                                   primiera_weight = primiera_weight,
+                                                                   sette_bello_weight = sette_bello_weight,
+                                                                   denari_weight = denari_weight,
+                                                                   scope_weight = scope_weight,
+                                                                   explain = F),
+                                      cards_weight = cards_weight,
+                                      primiera_weight = primiera_weight,
+                                      sette_bello_weight = sette_bello_weight,
+                                      denari_weight = denari_weight,
+                                      scope_weight = scope_weight)
+      }) %>% mean() # end of the sapply on the possible_hands
+    }) # end of sapply on the possible_decisions
+  } # end of the if statement (random_play)
+
+  if (option_for_n_plus_1 == "ponderated_scenario" & game_state$turn <= 36) {
+    possible_hands <- GetPossibleCardsInHandOfAPlayer(game_state, other_player)
+    number_of_options <- length(possible_hands)
+    size_of_hand <- length(GetPlayerHand(game_state, other_player))
+    ponderations <- rep(1, number_of_options)
+    if (size_of_hand == 2) ponderations <- c(rep(1.5, floor(number_of_options/2)),
+                                             rep(1, number_of_options - floor(number_of_options/2)))
+    if (size_of_hand == 3) ponderations <- c(rep(3, floor(number_of_options/3)),
+                                             rep(2, floor(number_of_options/3)),
+                                             rep(1, number_of_options - 2*floor(number_of_options/3)))
+    expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
+      game_state_after_dec <- PlayCard(game_state, player, dec)
+      sapply(possible_hands, function(this_hand) {
+        game_state_with_this_hand <- game_state_after_dec
+        game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
+        GiveExpectedScoreForADecision(game_state = game_state_with_this_hand,
+                                      player = other_player,
+                                      decision = OptimizedDecision(game_state_with_this_hand,
+                                                                   other_player,
+                                                                   if_equality_min_risk_of_scopa = T,
+                                                                   cards_weight = cards_weight,
+                                                                   primiera_weight = primiera_weight,
+                                                                   sette_bello_weight = sette_bello_weight,
+                                                                   denari_weight = denari_weight,
+                                                                   scope_weight = scope_weight,
+                                                                   explain = F),
+                                      cards_weight = cards_weight,
+                                      primiera_weight = primiera_weight,
+                                      sette_bello_weight = sette_bello_weight,
+                                      denari_weight = denari_weight,
+                                      scope_weight = scope_weight)
+      }) %>% sort(decreasing = T) %>% weighted.mean(x = ., w = ponderations) # end of the sapply on the possible_hands
+    }) # end of sapply on the possible_decisions
+  } # end of the if statement (ponderated_scenario)
+
+  if (option_for_n_plus_1 == "true_calculus" & game_state$turn <= 36) {
+    possible_hands <- GetPossibleHandsOfAPlayer(game_state, other_player)
+    expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
+      game_state_after_dec <- PlayCard(game_state, player, dec)
+      sapply(possible_hands, function(this_hand) {
+        game_state_with_this_hand <- game_state_after_dec
+        game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
+        GiveExpectedScoreForADecision(game_state = game_state_with_this_hand,
+                                      player = other_player,
+                                      decision = OptimizedDecision(game_state_with_this_hand,
+                                                                   other_player,
+                                                                   if_equality_min_risk_of_scopa = T,
+                                                                   cards_weight = cards_weight,
+                                                                   primiera_weight = primiera_weight,
+                                                                   sette_bello_weight = sette_bello_weight,
+                                                                   denari_weight = denari_weight,
+                                                                   scope_weight = scope_weight,
+                                                                   explain = F),
+                                      cards_weight = cards_weight,
+                                      primiera_weight = primiera_weight,
+                                      sette_bello_weight = sette_bello_weight,
+                                      denari_weight = denari_weight,
+                                      scope_weight = scope_weight)
+      }) %>% mean() # end of the sapply on the possible_hands
+    }) # end of sapply on the possible_decisions
+  } # end of the if statement (true calculus)
 
   expected_scores_n_n_plus_1 <- expected_scores - expected_scores_n_plus_1
   # take the highest expected scores
@@ -172,11 +300,6 @@ OptimizedDecisionNPlus1 <- function(game_state,
   # otherwise just play for the lowest remaining board
   return(optimized_decisions[[1]])
 }
-
-# OptimizedDecisionNPlus1(InitialiseGameState(), player = 1)
-
-
-
 
 
 invlogit <- function(x) 1 / (1 + exp(x))
