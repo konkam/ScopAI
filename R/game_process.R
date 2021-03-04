@@ -2,7 +2,7 @@
 #'
 #' @param starting_player 1 or 2 according to which player starts
 #' @param DecisionFunction A function DecisionFunction(game_state, current_player) which returns a list (play = card_played, take = cards_taken)
-#'
+#' @param seed Specify a seed if you want a repeatable game, by default the RNG is not seeded.
 #' In the future, DecisionFunction(game_state, current_player) may be modified to take history into account as DecisionFunction(game_states, current_player)
 #'
 #' The game state is a list with elements:
