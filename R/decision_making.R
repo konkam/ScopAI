@@ -30,6 +30,11 @@ IsADecisionValid <- function(game_state,
   }
 }
 
+DummyDecision <- function(game_state, player) {
+  play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
+  take <- c("B1")
+  return(list(play = play, take = take))
+}
 
 RandomDecision <- function(game_state, player) {
   play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
@@ -96,11 +101,81 @@ OptimizedDecision <- function(game_state,
   return(optimized_decisions[[1]])
 }
 
-DummyDecision <- function(game_state, player) {
-  play <- sample(x = GetPlayerHand(game_state = game_state, player = player), size = 1)
-  take <- c("B1")
-  return(list(play = play, take = take))
+OptimizedDecisionNPlus1 <- function(game_state,
+                                    player,
+                                    option_for_n_plus_1 = c("cheater", "worst_case_scenario", "random_play", "true_calculus", "ponderated_scenario")[1],
+                                    cards_weight = 1,
+                                    primiera_weight = 1,
+                                    sette_bello_weight = 1,
+                                    denari_weight = 1,
+                                    scope_weight = 1,
+                                    explain = F) {
+  if (explain) ShowHandsAndBoard(game_state)
+  # list the possible decisions
+  possible_decisions <- ListAllPossibleDecisions(game_state = game_state, player = player)
+
+  # compute the expected score for each decision
+  expected_scores <- sapply(possible_decisions, function(dec)
+    GiveExpectedScoreForADecision(game_state = game_state, player = player, decision = dec,
+                                  cards_weight = cards_weight,
+                                  primiera_weight = primiera_weight,
+                                  sette_bello_weight = sette_bello_weight,
+                                  denari_weight = denari_weight,
+                                  scope_weight = scope_weight))
+
+  if (option_for_n_plus_1 == "cheater") {
+    expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
+      game_state_after_dec <- PlayCard(game_state, player, dec)
+      other_player <- SwitchPlayer(player)
+      GiveExpectedScoreForADecision(game_state = game_state_after_dec,
+                                    player = other_player,
+                                    decision = OptimizedDecision(game_state_after_dec,
+                                                                 other_player,
+                                                                 if_equality_min_risk_of_scopa = T,
+                                                                 cards_weight = cards_weight,
+                                                                 primiera_weight = primiera_weight,
+                                                                 sette_bello_weight = sette_bello_weight,
+                                                                 denari_weight = denari_weight,
+                                                                 scope_weight = scope_weight,
+                                                                 explain = F),
+                                    cards_weight = cards_weight,
+                                    primiera_weight = primiera_weight,
+                                    sette_bello_weight = sette_bello_weight,
+                                    denari_weight = denari_weight,
+                                    scope_weight = scope_weight)
+    }
+    )
+  }
+
+  expected_scores_n_n_plus_1 <- expected_scores - expected_scores_n_plus_1
+  # take the highest expected scores
+  optimized_decisions <- possible_decisions[expected_scores_n_n_plus_1 == max(expected_scores_n_n_plus_1)]
+
+  # if there is only one choose it
+  if (length(optimized_decisions) == 1) return(optimized_decisions[[1]])
+
+  # otherwise, try to minimize the risk of scopa
+  # start by getting the board value for each decision
+  new_board_values <- sapply(optimized_decisions, function(dec)
+    GetSumValuesOfCards(PlayCard(game_state = game_state, player = player, dec)$board))
+  # order the decisions according to this value
+  optimized_decisions <- optimized_decisions[order(new_board_values)]
+  new_board_values <- sort(new_board_values)
+
+  # if there is at least one decision leaving the board higher than 10, restrict to it and then play the lowest remaining board with []
+  if (new_board_values[length(new_board_values)] > 10) {
+    return(optimized_decisions[new_board_values > 10][[1]])
+  }
+
+  # otherwise just play for the lowest remaining board
+  return(optimized_decisions[[1]])
 }
+
+# OptimizedDecisionNPlus1(InitialiseGameState(), player = 1)
+
+
+
+
 
 invlogit <- function(x) 1 / (1 + exp(x))
 
