@@ -181,5 +181,7 @@ GetPossibleCardsInHandOfAPlayer <- function(game_state, player_to_guess_the_hand
 
 GetPossibleHandsOfAPlayer <- function(game_state, player_to_guess_the_hand) {
   true_hand_of_player <- GetPlayerHand(game_state, player_to_guess_the_hand)
-  combn(union(game_state$deck, true_hand_of_player), m = length(true_hand_of_player), simplify = F)
+  cards_of_the_player <- length(true_hand_of_player)
+  if (cards_of_the_player == 0) cards_of_the_player <- 3
+  combn(union(game_state$deck, true_hand_of_player), m = cards_of_the_player, simplify = F)
 }
