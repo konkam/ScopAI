@@ -157,12 +157,13 @@ DealPlayersCards <- function(game_state, starting_player) {
 #'
 #' @return
 #'
-PlayCard <- function(game_state, player, decision, check_for_validity =  F) {
+PlayCard <- function(game_state, player, decision, check_for_validity =  F, check_card_numbers = F) {
   if (player != 1 && player != 2) {
     stop(print("starting_player should be 1 or 2"))
   }
 
-  if (length(GetPlayerHand(game_state, player)) < length(GetPlayerHand(game_state, SwitchPlayer(player)))) {
+  if (length(GetPlayerHand(game_state, player)) < length(GetPlayerHand(game_state, SwitchPlayer(player))) &
+      check_card_numbers) {
     stop(print("the current player should have at least as much cards as the other player"))
   }
 
