@@ -139,6 +139,19 @@ Le deuxième joueur semble avantagé !
 
 ##
 
+## Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
+
+
+```{r}
+Compare2DecisionStrategies(OptimizedDecision, RandomDecision)
+
+```
+
+Il serait intéressant de comprendre ce qu'a ce deck de si particulier !
+
+
+##
+
 # Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
 Cette fonction utilise le dictionnaire universel des (play, take) pour réduire les possibilités et lister tous les 'take' associés à un play et un board 
 -> même comme ça la recherche peut être encore longue car plus de 1000 possibilités pour un 10 
@@ -207,7 +220,7 @@ On peut imaginer diverses stratégies :
 2) le joueur optimise espérance(nième décision) - espérance(n+1ème décision pour other)
 3) le joueur optimise esp(n) - esp(n+1) + esp(n+2) - esp(n+3) + …
 
-Notons possible_deck = union(deck, other$hand)
+Notons possible_deck = union(deck, other_hand)
 Pour la stratégie numéro 2, plusieurs possibilités pour optimiser l'espérance du player, sachant qu'on ne connait pas ses cartes :
 a) méthode du vrai calcul : faire la moyenne des scores de l'adversaire en fonction de toutes les combinaisons de cartes qu'il pourrait avoir (avec la fonction PossibleHandOfOther)
 -> pour chacune de ces hands, considérer que l'adversaire optimise à 1 coup, et choisir l'espérance dans ce cas, et faire la moyenne des espérances.
@@ -215,7 +228,7 @@ a) méthode du vrai calcul : faire la moyenne des scores de l'adversaire en fonc
 -> quand l'adversaire a une seule carte en main, cette méthode est aussi rapide que les autres donc autant l'utiliser ; 
 quand il a 2 cartes en mains, il y a au max 2 parmi 33 = 528 combinaisons
 b) méthode qui envisage le pire : optimiser l'espérance du joueur comme s'il avait en main tout le possible_deck
--> c’est-à-dire optimiser les expected scores de toutes les décisions possibles si le game_state$other$hand était égal au possible_deck
+-> c’est-à-dire optimiser les expected scores de toutes les décisions possibles si le game_state_other_hand était égal au possible_deck
 -> autrement dit, on considère le pire scénario possible, le cas où l'adversaire aurait la meilleure carte à jouer possible
 -> il y a length(possible_deck) calculs à faire, donc maximum 33
 c) méthode de l'adversaire au hasard : faire la moyenne des scores de l'adversaire en fonction des length(possible_deck) cartes restantes, équiprobablement 
