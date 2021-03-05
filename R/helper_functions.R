@@ -133,7 +133,7 @@ TakeableCardsOnBoardOptimized <- function(card, board) {
   for (i in length(restricted_takes):1) { # count backwards because you remove some parts of the list
     if (any(!restricted_takes[[i]] %in% board)) restricted_takes <- restricted_takes[-i]
   }
-  if (length(restricted_takes) == 0) return(NULL)
+  if (length(restricted_takes) > 0) restricted_takes <- restricted_takes[-1] # if there is at least one possible take, then you cannot take null, so you remove the first entry of the dictionnary (NULL)
   return(restricted_takes)
 }
 
