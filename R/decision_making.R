@@ -101,6 +101,9 @@ OptimizedDecision <- function(game_state,
   return(optimized_decisions[[1]])
 }
 
+
+# Anticipate the other next move -------
+
 OptimizedDecisionNPlus1 <- function(game_state,
                                     player,
                                     option_for_n_plus_1 = c("cheater", "worst_case_scenario",
@@ -141,6 +144,8 @@ OptimizedDecisionNPlus1 <- function(game_state,
   if (option_for_n_plus_1 == "cheater" & game_state$turn <= 36) {
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
+      if (game_state$turn %% 6 == 0) game_state_after_dec <- DealPlayersCards(game_state_after_dec,
+                                                                               starting_player = other_player)
       GiveExpectedScoreForADecision(game_state = game_state_after_dec,
                                     player = other_player,
                                     decision = OptimizedDecision(game_state_after_dec,
@@ -165,6 +170,8 @@ OptimizedDecisionNPlus1 <- function(game_state,
     possible_hands <- GetPossibleCardsInHandOfAPlayer(game_state, other_player)
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
+      if (game_state$turn %% 6 == 0) game_state_after_dec <- DealPlayersCards(game_state_after_dec,
+                                                                               starting_player = other_player)
       sapply(possible_hands, function(this_hand) {
         game_state_with_this_hand <- game_state_after_dec
         game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
@@ -192,6 +199,8 @@ OptimizedDecisionNPlus1 <- function(game_state,
     possible_hands <- GetPossibleCardsInHandOfAPlayer(game_state, other_player)
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
+      if (game_state$turn %% 6 == 0) game_state_after_dec <- DealPlayersCards(game_state_after_dec,
+                                                                               starting_player = other_player)
       sapply(possible_hands, function(this_hand) {
         game_state_with_this_hand <- game_state_after_dec
         game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
@@ -227,6 +236,8 @@ OptimizedDecisionNPlus1 <- function(game_state,
                                              rep(1, number_of_options - 2*floor(number_of_options/3)))
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
+      if (game_state$turn %% 6 == 0) game_state_after_dec <- DealPlayersCards(game_state_after_dec,
+                                                                               starting_player = other_player)
       sapply(possible_hands, function(this_hand) {
         game_state_with_this_hand <- game_state_after_dec
         game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
@@ -254,6 +265,8 @@ OptimizedDecisionNPlus1 <- function(game_state,
     possible_hands <- GetPossibleHandsOfAPlayer(game_state, other_player)
     expected_scores_n_plus_1 <- sapply(possible_decisions, function(dec) {
       game_state_after_dec <- PlayCard(game_state, player, dec)
+      if (game_state$turn %% 6 == 0) game_state_after_dec <- DealPlayersCards(game_state_after_dec,
+                                                                               starting_player = other_player)
       sapply(possible_hands, function(this_hand) {
         game_state_with_this_hand <- game_state_after_dec
         game_state_with_this_hand[[GetPlayerName(other_player)]]$hand <- this_hand
@@ -300,6 +313,11 @@ OptimizedDecisionNPlus1 <- function(game_state,
   # otherwise just play for the lowest remaining board
   return(optimized_decisions[[1]])
 }
+
+RunGame(starting_player = 1, DecisionFunction = OptimizedDecisionNPlus1)
+RunGameWithDifferentStrategies(starting_player = 1, DecisionFunction1 = OptimizedDecision,
+                               DecisionFunction2 = OptimizedDecisionNPlus1)[1:2]
+
 
 
 invlogit <- function(x) 1 / (1 + exp(x))
