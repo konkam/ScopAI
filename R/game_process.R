@@ -98,6 +98,8 @@ RunGameWithDifferentStrategies <- function(starting_player = 1,
   }
   # print(length(game_state$deck))
   game_state <- FinishGame(game_state = game_state)
+  game_states[[game_state$turn]] <- game_state
+  
   # At the end of the game, people have NAs in their hands
   return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1),
               score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2),
