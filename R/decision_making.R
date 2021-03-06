@@ -314,11 +314,59 @@ OptimizedDecisionNPlus1 <- function(game_state,
   return(optimized_decisions[[1]])
 }
 
-RunGame(starting_player = 1, DecisionFunction = OptimizedDecisionNPlus1)
-RunGameWithDifferentStrategies(starting_player = 1, DecisionFunction1 = OptimizedDecision,
-                               DecisionFunction2 = OptimizedDecisionNPlus1)[1:2]
+OptimizedDecisionNPlus1_cheater <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                            sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "cheater",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
 
+OptimizedDecisionNPlus1_worst_case_scenario <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                                        sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "worst_case_scenario",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
 
+OptimizedDecisionNPlus1_random_play <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                                sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "random_play",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
+
+OptimizedDecisionNPlus1_true_calculus <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                                  sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "true_calculus",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
+
+OptimizedDecisionNPlus1_ponderated_scenario <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                                        sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "ponderated_scenario",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
+
+OptimizedDecisionNPlus1_true_if_not_too_much <- function(game_state, player, cards_weight = 1, primiera_weight = 1,
+                                                        sette_bello_weight = 1, denari_weight = 1, scope_weight = 1) {
+  OptimizedDecisionNPlus1(game_state = game_state, player = player,
+                          option_for_n_plus_1 = "true_if_not_too_much",
+                          cards_weight = cards_weight, primiera_weight = primiera_weight,
+                          sette_bello_weight = sette_bello_weight, denari_weight = denari_weight,
+                          scope_weight = scope_weight)
+}
 
 invlogit <- function(x) 1 / (1 + exp(x))
 
