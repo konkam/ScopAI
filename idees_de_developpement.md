@@ -12,6 +12,10 @@
     -   [Joueur aléatoire: le deuxième joueur est un peu
         avantagé](#joueur-aléatoire-le-deuxième-joueur-est-un-peu-avantagé)
     -   [](#section)
+    -   [Joueur aléatoire vs joueur optimisé : certains seeds donnent
+        systématiquement des
+        égalités](#joueur-aléatoire-vs-joueur-optimisé-certains-seeds-donnent-systématiquement-des-égalités)
+    -   [](#section-1)
 -   [Si jamais on voulait optimiser encore plus la fonction Décision
     Possible Rapide
     (TakeableCardsOnBoardOptimized)](#si-jamais-on-voulait-optimiser-encore-plus-la-fonction-décision-possible-rapide-takeablecardsonboardoptimized)
@@ -167,6 +171,35 @@ Joueur aléatoire: le deuxième joueur est un peu avantagé
 
 Le deuxième joueur semble avantagé !
 
+Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
+------------------------------------------------------------------------------------------
+
+    ScopAI:::Compare2DecisionStrategies(ScopAI:::OptimizedDecision, ScopAI:::RandomDecision)
+
+    ## # A tibble: 10 x 9
+    ##    seed_used number_of_eval player1_started player2_started score1_sum
+    ##        <int>          <int>           <int>           <int>      <dbl>
+    ##  1         1             10               6               4         50
+    ##  2         2             10               6               4         12
+    ##  3         3             10               3               7         30
+    ##  4         4             10               5               5         25
+    ##  5         5             10               2               8         24
+    ##  6         6             10               6               4         34
+    ##  7         7             10               6               4         34
+    ##  8         8             10               5               5         10
+    ##  9         9             10               6               4         42
+    ## 10        10             10               5               5         25
+    ## # … with 4 more variables: score2_sum <dbl>, n_wins_for_1 <int>,
+    ## #   n_wins_for_2 <int>, n_ties <int>
+
+    ## # A tibble: 1 x 9
+    ##   seed_used number_of_eval player1_started player2_started score1_sum score2_sum
+    ##   <chr>              <int>           <int>           <int>      <dbl>      <dbl>
+    ## 1 all                  100              50              50        286        143
+    ## # … with 3 more variables: n_wins_for_1 <int>, n_wins_for_2 <int>, n_ties <int>
+
+Il serait intéressant de comprendre ce qu’a ce deck de si particulier !
+
 Si jamais on voulait optimiser encore plus la fonction Décision Possible Rapide (TakeableCardsOnBoardOptimized)
 ===============================================================================================================
 
@@ -308,11 +341,25 @@ ou ne pas poser de 7. 2) le joueur optimise espérance(nième décision) -
 espérance(n+1ème décision pour other) 3) le joueur optimise esp(n) -
 esp(n+1) + esp(n+2) - esp(n+3) + …
 
-Notons possible\_deck = union(deck,
-other*h**a**n**d*)*P**o**u**r**l**a**s**t**r**a**t**é**g**i**e**n**u**m**é**r**o*2, *p**l**u**s**i**e**u**r**s**p**o**s**s**i**b**i**l**i**t**é**s**p**o**u**r**o**p**t**i**m**i**s**e**r**l*′*e**s**p**é**r**a**n**c**e**d**u**p**l**a**y**e**r*, *s**a**c**h**a**n**t**q**u*′*o**n**n**e**c**o**n**n**a**i**t**p**a**s**s**e**s**c**a**r**t**e**s* : *a*)*m**é**t**h**o**d**e**d**u**v**r**a**i**c**a**l**c**u**l* : *f**a**i**r**e**l**a**m**o**y**e**n**n**e**d**e**s**s**c**o**r**e**s**d**e**l*′*a**d**v**e**r**s**a**i**r**e**e**n**f**o**n**c**t**i**o**n**d**e**t**o**u**t**e**s**l**e**s**c**o**m**b**i**n**a**i**s**o**n**s**d**e**c**a**r**t**e**s**q**u*′*i**l**p**o**u**r**r**a**i**t**a**v**o**i**r*(*a**v**e**c**l**a**f**o**n**c**t**i**o**n**P**o**s**s**i**b**l**e**H**a**n**d**O**f**O**t**h**e**r*) −  &gt; *p**o**u**r**c**h**a**c**u**n**e**d**e**c**e**s**h**a**n**d**s*, *c**o**n**s**i**d**é**r**e**r**q**u**e**l*′*a**d**v**e**r**s**a**i**r**e**o**p**t**i**m**i**s**e**à*1*c**o**u**p*, *e**t**c**h**o**i**s**i**r**l*′*e**s**p**é**r**a**n**c**e**d**a**n**s**c**e**c**a**s*, *e**t**f**a**i**r**e**l**a**m**o**y**e**n**n**e**d**e**s**e**s**p**é**r**a**n**c**e**s*. −  &gt; *c*′*e**s**t**p**l**u**s**l**o**n**g**à**c**a**l**c**u**l**e**r**q**u**a**n**d**l*′*a**d**v**e**r**s**a**i**r**e**a*3*c**a**r**t**e**s**e**n**m**a**i**n**s*, *e**t**c*′*e**s**t**p**l**u**s**r**a**p**i**d**e**à**c**a**l**c**u**l**e**r**q**u**a**n**d**l**e**j**e**u**a**v**a**n**c**e*(*m**a**x**i**m**u**m*5456*c**o**m**b**i**n**a**i**s**o**n**a**u**p**r**e**m**i**e**r**c**a**l**c**u**l*) −  &gt; *q**u**a**n**d**l*′*a**d**v**e**r**s**a**i**r**e**a**u**n**e**s**e**u**l**e**c**a**r**t**e**e**n**m**a**i**n*, *c**e**t**t**e**m**é**t**h**o**d**e**e**s**t**a**u**s**s**i**r**a**p**i**d**e**q**u**e**l**e**s**a**u**t**r**e**s**d**o**n**c**a**u**t**a**n**t**l*′*u**t**i**l**i**s**e**r*; *q**u**a**n**d**i**l**a*2*c**a**r**t**e**s**e**n**m**a**i**n**s*, *i**l**y**a**a**u**m**a**x*2*p**a**r**m**i*33 = 528*c**o**m**b**i**n**a**i**s**o**n**s**b*)*m**é**t**h**o**d**e**q**u**i**e**n**v**i**s**a**g**e**l**e**p**i**r**e* : *o**p**t**i**m**i**s**e**r**l*′*e**s**p**é**r**a**n**c**e**d**u**j**o**u**e**u**r**c**o**m**m**e**s*′*i**l**a**v**a**i**t**e**n**m**a**i**n**t**o**u**t**l**e**p**o**s**s**i**b**l**e*<sub>*d*</sub>*e**c**k* −  &gt; *c*’*e**s**t* − *à* − *d**i**r**e**o**p**t**i**m**i**s**e**r**l**e**s**e**x**p**e**c**t**e**d**s**c**o**r**e**s**d**e**t**o**u**t**e**s**l**e**s**d**é**c**i**s**i**o**n**s**p**o**s**s**i**b**l**e**s**s**i**l**e**g**a**m**e*<sub>*s*</sub>*t**a**t**e*other$hand
-était égal au possible\_deck -&gt; autrement dit, on considère le pire
-scénario possible, le cas où l’adversaire aurait la meilleure carte à
-jouer possible -&gt; il y a length(possible\_deck) calculs à faire, donc
+Notons possible\_deck = union(deck, other\_hand) Pour la stratégie
+numéro 2, plusieurs possibilités pour optimiser l’espérance du player,
+sachant qu’on ne connait pas ses cartes : a) méthode du vrai calcul :
+faire la moyenne des scores de l’adversaire en fonction de toutes les
+combinaisons de cartes qu’il pourrait avoir (avec la fonction
+PossibleHandOfOther) -&gt; pour chacune de ces hands, considérer que
+l’adversaire optimise à 1 coup, et choisir l’espérance dans ce cas, et
+faire la moyenne des espérances. -&gt; c’est plus long à calculer quand
+l’adversaire a 3 cartes en mains, et c’est plus rapide à calculer quand
+le jeu avance (maximum 5456 combinaison au premier calcul) -&gt; quand
+l’adversaire a une seule carte en main, cette méthode est aussi rapide
+que les autres donc autant l’utiliser ; quand il a 2 cartes en mains, il
+y a au max 2 parmi 33 = 528 combinaisons b) méthode qui envisage le pire
+: optimiser l’espérance du joueur comme s’il avait en main tout le
+possible\_deck -&gt; c’est-à-dire optimiser les expected scores de
+toutes les décisions possibles si le game\_state\_other\_hand était égal
+au possible\_deck -&gt; autrement dit, on considère le pire scénario
+possible, le cas où l’adversaire aurait la meilleure carte à jouer
+possible -&gt; il y a length(possible\_deck) calculs à faire, donc
 maximum 33 c) méthode de l’adversaire au hasard : faire la moyenne des
 scores de l’adversaire en fonction des length(possible\_deck) cartes
 restantes, équiprobablement -&gt; ça permet de limiter le nombre de

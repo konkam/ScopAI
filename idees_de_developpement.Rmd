@@ -143,7 +143,7 @@ Le deuxième joueur semble avantagé !
 
 
 ```{r}
-Compare2DecisionStrategies(OptimizedDecision, RandomDecision)
+ScopAI:::Compare2DecisionStrategies(ScopAI:::OptimizedDecision, ScopAI:::RandomDecision)
 
 ```
 
