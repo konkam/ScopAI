@@ -17,31 +17,9 @@
 #' last_taker
 #'
 #' @export
-#'
 RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
-  game_state <- InitialiseGameState(seed = seed)
-  current_player <- starting_player
-  game_states <- list()
-  game_states[[game_state$turn]] <- game_state
-  while (length(game_state$deck) >= 6) { #Dealing 6 cards each time, stops when deck is empty
-    # print(length(game_state$deck))
-    if (game_state$turn > 1) game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player) # At first turn, cards have already been dealt with InitialiseGameState
-    
-    while (length(GetPlayerHand(game_state, current_player)) > 0) {
-      game_state <- PlayCard(game_state = game_state,
-                             player = current_player,
-                             decision = DecisionFunction(game_state, current_player))
-      current_player <- SwitchPlayer(current_player)
-      game_states[[game_state$turn]] <- game_state
+  RunGameWithDifferentStrategies(starting_player = starting_player, DecisionFunction, DecisionFunction, seed = seed) 
     }
-  }
-  # print(length(game_state$deck))
-  game_state <- FinishGame(game_state = game_state)
-  # At the end of the game, people have NAs in their hands
-  return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1),
-              score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2),
-              game_history = game_states))
-}
 
 # Below is the previous version in case I made a mistake !!
 # RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
