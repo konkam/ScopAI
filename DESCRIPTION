@@ -20,15 +20,5 @@ Config/testthat/edition: 3
 Imports: 
     magrittr,
     purrr
-Collate: 
-    'card_manipulation_functions.R'
-    'decision_making.R'
-    'game_initialisation.R'
-    'game_process.R'
-    'helper_functions.R'
-    'global_values.R'
-    'score_functions.R'
-    'utils-pipe.R'
-    'play_take_dict.R'
 Depends: 
     R (>= 2.10)
