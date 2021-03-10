@@ -23,9 +23,10 @@ RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
   current_player <- starting_player
   game_states <- list()
   game_states[[game_state$turn]] <- game_state
-  while (length(game_state$deck) >= 0 && game_state$turn <= 36) {
+  while (length(game_state$deck) >= 6) { #Dealing 6 cards each time, stops when deck is empty
     # print(length(game_state$deck))
-
+    if (game_state$turn > 1) game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player) # At first turn, cards have already been dealt with InitialiseGameState
+    
     while (length(GetPlayerHand(game_state, current_player)) > 0) {
       game_state <- PlayCard(game_state = game_state,
                              player = current_player,
@@ -33,7 +34,6 @@ RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
       current_player <- SwitchPlayer(current_player)
       game_states[[game_state$turn]] <- game_state
     }
-    if (game_state$turn <= 36) game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player)
   }
   # print(length(game_state$deck))
   game_state <- FinishGame(game_state = game_state)
@@ -72,14 +72,15 @@ RunGame <- function(starting_player, DecisionFunction, seed = NULL) {
 RunGameWithDifferentStrategies <- function(starting_player = 1,
                                            DecisionFunction1,
                                            DecisionFunction2 = DecisionFunction1,
-                                           seed = 1) {
+                                           seed = NULL) {
   game_state <- InitialiseGameState(seed = seed)
   current_player <- starting_player
   game_states <- list()
   game_states[[game_state$turn]] <- game_state
-  while (length(game_state$deck) >= 6 && game_state$turn <= 36) {
+  while (length(game_state$deck) >= 6) { #Dealing 6 cards each time, stops when deck is empty
     # print(length(game_state$deck))
-
+    if (game_state$turn > 1) game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player) # At first turn, cards have already been dealt with InitialiseGameState
+    
     while (length(GetPlayerHand(game_state, current_player)) > 0) {
       if (current_player == 1) {
         game_state <- PlayCard(game_state = game_state,
@@ -94,7 +95,6 @@ RunGameWithDifferentStrategies <- function(starting_player = 1,
       current_player <- SwitchPlayer(current_player)
       game_states[[game_state$turn]] <- game_state
     }
-    game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player)
   }
   # print(length(game_state$deck))
   game_state <- FinishGame(game_state = game_state)
