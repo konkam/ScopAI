@@ -29,13 +29,24 @@ test_that("Finishing game executes correctly", {
   expect_equal(length(g3$board), 0)
 })
 test_that("Game runs correctly", {
-  game <- RunGame(seed = 1, starting_player = 1, DecisionFunction = DummyDecision)
+  game <- RunGame(seed = 1, starting_player = 1, DecisionFunction = RandomDecision)
   expect_false(any(is.na(game$score_player1)))
   expect_false(any(is.na(game$score_player2)))
   hands_player1 <- game$game_history %>% lapply(FUN = function(x) x$player1$hand)
+  expect_equal(length(hands_player1), 37) #Right number of turns in a game
   expect_equal(unique(hands_player1 %>% lapply(length)) %>% unlist() %>% sort(), 0:3)
   expect_false(any(hands_player1 %>% unlist() %>% is.na()))
   hands_player2 <- game$game_history %>% lapply(FUN = function(x) x$player2$hand)
   expect_equal(unique(hands_player2 %>% lapply(length)) %>% unlist() %>% sort(), 0:3)
   expect_false(any(hands_player2 %>% unlist() %>% is.na()))
+  
+  for (t in game$game_history){ #The number of cards is conserved
+    expect_equal(length(t$deck) + length(t$board) + length(t$player1$hand) + length(t$player1$stack) + length(t$player2$hand) + length(t$player2$stack), 40)
+  }
+  
+  for (t in game$game_history){ #The number of cards is conserved and cards are not duplicated
+    expect_equal(unique(c(t$deck, t$board, t$player1$hand, t$player1$stack, t$player2$hand, t$player2$stack)) %>% length(), 40)
+  }
+  
+  expect_equal(game$game_history %>% lapply(FUN = function(x) x$deck %>% length) %>% unique() %>% unlist() %>% sort, seq(0,30, by = 6))
 })
