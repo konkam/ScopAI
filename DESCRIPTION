@@ -29,3 +29,6 @@ Collate:
     'global_values.R'
     'score_functions.R'
     'utils-pipe.R'
+    'play_take_dict.R'
+Depends: 
+    R (>= 2.10)
