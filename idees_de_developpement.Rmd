@@ -105,13 +105,22 @@ res %>%
 
 On dirait qu'il faut 400-500 parties pour que les estimateurs de score se stabilisent.
 
+```{r}
+res %>% 
+  gather(variable, value, score_player_1, score_player_2, score_diff) %>% 
+  ggplot(aes(x = value, y = ..density.., colour = variable, group = variable)) + 
+  theme_bw() + 
+  geom_freqpoly(alpha = 0.5)
+```
+
+
 # Performance de joueurs
 
 ## Joueur aléatoire: le deuxième joueur est un peu avantagé
 
 
 ```{r}
-res2 = ComputeScores(ngames = 7*80, seed = 3) %>% 
+res2 = ComputeScores(ngames = 7*100, seed = 2) %>% 
   mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
          score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
   mutate(score_diff = score_premier_joueur-score_deuxieme_joueur) %>% 
@@ -133,7 +142,8 @@ res2 %>%
   ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 ```
 
-First or second players seem to have no advantage
+Le deuxième joueur semble avoir un petit avantage.
+
 
 ## Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
 

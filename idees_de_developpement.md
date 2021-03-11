@@ -141,13 +141,23 @@ et de la difficulté d’optimiser des décisions en milieu aléatoire
 On dirait qu’il faut 400-500 parties pour que les estimateurs de score
 se stabilisent.
 
+    res %>% 
+      gather(variable, value, score_player_1, score_player_2, score_diff) %>% 
+      ggplot(aes(x = value, y = ..density.., colour = variable, group = variable)) + 
+      theme_bw() + 
+      geom_freqpoly(alpha = 0.5)
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+
 Performance de joueurs
 ======================
 
 Joueur aléatoire: le deuxième joueur est un peu avantagé
 --------------------------------------------------------
 
-    res2 = ComputeScores(ngames = 7*80, seed = 3) %>% 
+    res2 = ComputeScores(ngames = 7*100, seed = 2) %>% 
       mutate(score_premier_joueur = ifelse(starting_player == 1, yes = score_player_1, no = score_player_2),
              score_deuxieme_joueur = ifelse(starting_player == 2, yes = score_player_1, no = score_player_2))  %>% 
       mutate(score_diff = score_premier_joueur-score_deuxieme_joueur) %>% 
@@ -166,9 +176,9 @@ Joueur aléatoire: le deuxième joueur est un peu avantagé
       scale_colour_discrete(name ='', labels = c("Deuxième joueur", "Différence", "Premier joueur")) + 
       ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 
-![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
-First or second players seem to have no advantage
+Le deuxième joueur semble avoir un petit avantage.
 
 Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
 ------------------------------------------------------------------------------------------
@@ -179,14 +189,14 @@ Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement
     ##    seed_used number_of_eval player1_started player2_started score1_sum
     ##        <int>          <int>           <int>           <int>      <dbl>
     ##  1         1             10               7               3         44
-    ##  2         2             10               5               5         20
-    ##  3         3             10               6               4         24
-    ##  4         4             10               5               5         20
-    ##  5         5             10               5               5         25
-    ##  6         6             10               3               7         40
-    ##  7         7             10               7               3         40
-    ##  8         8             10               4               6         30
-    ##  9         9             10               5               5         55
+    ##  2         2             10               6               4         16
+    ##  3         3             10               4               6         16
+    ##  4         4             10               6               4         18
+    ##  5         5             10               4               6         22
+    ##  6         6             10               4               6         40
+    ##  7         7             10               5               5         40
+    ##  8         8             10               5               5         25
+    ##  9         9             10               6               4         58
     ## 10        10             10               3               7         40
     ## # … with 4 more variables: score2_sum <dbl>, n_wins_for_1 <int>,
     ## #   n_wins_for_2 <int>, n_ties <int>
@@ -194,7 +204,7 @@ Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement
     ## # A tibble: 1 x 9
     ##   seed_used number_of_eval player1_started player2_started score1_sum score2_sum
     ##   <chr>              <int>           <int>           <int>      <dbl>      <dbl>
-    ## 1 all                  100              50              50        338        120
+    ## 1 all                  100              50              50        319        139
     ## # … with 3 more variables: n_wins_for_1 <int>, n_wins_for_2 <int>, n_ties <int>
 
 Il serait intéressant de comprendre ce qu’a ce deck de si particulier !
