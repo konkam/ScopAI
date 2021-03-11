@@ -28,6 +28,7 @@ GetPlayerScope <- function(game_state, player) {
   game_state[[GetPlayerName(player)]]$scope
 }
 
+#' @importFrom utils combn
 AllSubsetsWithCombn <- function(cards, boundary = length(cards)) {
   if (length(cards) == 0) {
     return(return(character(0)))

@@ -3,3 +3,4 @@
 export("%>%")
 export(RunGame)
 importFrom(magrittr,"%>%")
+importFrom(utils,combn)
