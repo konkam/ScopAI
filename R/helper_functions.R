@@ -173,6 +173,10 @@ ShowHandsAndBoard <- function(game_state = InitialiseGameState(seed = 1)) {
 first = function(x) x[[1]]
 last = function(x) x[[length(x)]]
 
+is_even = function(x) {(x %% 2) == 0}
+
+is_odd = function(x) {!is_even(x)}
+
 SortAccordingToGame <- function(cards) {
   cards[order(factor(cards, levels = ordered_deck))]
 }
