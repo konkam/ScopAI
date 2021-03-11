@@ -69,7 +69,44 @@ RunGameWithDifferentStrategies <- function(starting_player = 1,
                                player = current_player,
                                decision = DecisionFunction2(game_state, current_player))
       }
+      
+      current_player <- SwitchPlayer(current_player)
+      game_states[[game_state$turn]] <- game_state
+    }
+  }
+  # print(length(game_state$deck))
+  game_state <- FinishGame(game_state = game_state)
+  game_states[[game_state$turn]] <- game_state
+  
+  # At the end of the game, people have NAs in their hands
+  return(list(score_player1 = GiveScoreFromStateForAPlayer(game_state, player = 1),
+              score_player2 = GiveScoreFromStateForAPlayer(game_state, player = 2),
+              game_history = game_states))
+}
 
+RunGameWithDeckWithDifferentStrategies <- function(starting_player = 1,
+                                           DecisionFunction1,
+                                           DecisionFunction2 = DecisionFunction1,
+                                           seed = NULL, deck = ShuffleNewDeck(seed)) {
+  game_state <- InitialiseGameStateWithDeck(deck = deck, starting_player = starting_player)
+  current_player <- starting_player
+  game_states <- list()
+  game_states[[game_state$turn]] <- game_state
+  while (length(game_state$deck) >= 6) { #Dealing 6 cards each time, stops when deck is empty
+    # print(length(game_state$deck))
+    if (game_state$turn > 1) game_state <- DealPlayersCards(game_state = game_state, starting_player = starting_player) # At first turn, cards have already been dealt with InitialiseGameState
+    
+    while (length(GetPlayerHand(game_state, current_player)) > 0) {
+      if (current_player == 1) {
+        game_state <- PlayCard(game_state = game_state,
+                               player = current_player,
+                               decision = DecisionFunction1(game_state, current_player))
+      } else {
+        game_state <- PlayCard(game_state = game_state,
+                               player = current_player,
+                               decision = DecisionFunction2(game_state, current_player))
+      }
+      
       current_player <- SwitchPlayer(current_player)
       game_states[[game_state$turn]] <- game_state
     }

@@ -30,22 +30,30 @@ DealBoardCards <- function(game_state) {
   return(game_state)
 }
 
-#' Title
+#' Initialise a game and distribute the deck
 #'
 #' @param seed Starting seed
 #' @param starting_player 1 or 2 according to which player starts
 #'
-#' @return
-#'
 InitialiseGameState <- function(seed = NULL, starting_player = 1) {
+  deck = ShuffleNewDeck(seed)
+  InitialiseGameStateWithDeck(deck, starting_player)
+}
+
+#' Initialise a game and distribute the deck, given an input deck
+#'
+#' @param deck Input deck
+#' @param starting_player 
+#'
+InitialiseGameStateWithDeck <- function(deck, starting_player = 1) {
   game_state <- list(
-    deck = ShuffleNewDeck(seed),
+    deck = deck,
     player1 = list(hand = c(), stack = c(), scope = 0),
     player2 = list(hand = c(), stack = c(), scope = 0),
     turn = 1, last_taker = NULL
   ) %>%
     DealPlayersCards(starting_player = starting_player) %>%
     DealBoardCards()
-
+  
   return(game_state)
 }
