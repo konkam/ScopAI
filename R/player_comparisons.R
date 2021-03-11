@@ -1,18 +1,18 @@
-CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2, seed = NULL, n_pair_games = 7 * 3, n_procs = 7) {
+CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7) {
   if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
   parallel::mclapply(
     X = 1:n_pair_games,
-    FUN = function(x) bind_rows(RunOneGame(starting_player = 1, DecisionFunction1, DecisionFunction2), RunOneGame(starting_player = 2, DecisionFunction1, DecisionFunction2)),
+    FUN = function(x) dplyr::bind_rows(RunOneGame(starting_player = 1, DecisionFunction1, DecisionFunction2), RunOneGame(starting_player = 2, DecisionFunction1, DecisionFunction2)),
     mc.set.seed = T,
     mc.preschedule = T,
     mc.cores = n_procs
   ) %>%
-    bind_rows()
+    dplyr::bind_rows()
 }
 
-RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2) {
+RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL) {
   g <- RunGameWithDifferentStrategies(starting_player = starting_player, DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = seed)
-  tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
+  tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
 }
 
 
