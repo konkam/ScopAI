@@ -116,6 +116,17 @@ res %>%
 
 # Performance de joueurs
 
+## Framework for comparing two players
+
+On compare deux joueurs sur le même deck, en en faisant commencer l'un puis l'autre. Comme ça ils sont confronté à la même séquence de cartes.
+
+On calcule ensuite les scores, sur un certain nombre de parties, et on les visualise de la manière suivante:
+
+```{r}
+ScopAI:::CompareTwoPlayers(DecisionFunction1 = ScopAI:::RandomDecision, n_games = 200) %>% ScopAI:::PlotPlayerComparison()
+```
+
+
 ## Joueur aléatoire: le deuxième joueur est un peu avantagé
 
 

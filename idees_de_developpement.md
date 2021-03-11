@@ -9,6 +9,8 @@
     -   [Apprentissage des règles](#apprentissage-des-règles)
 -   [Distribution des scores](#distribution-des-scores)
 -   [Performance de joueurs](#performance-de-joueurs)
+    -   [Framework for comparing two
+        players](#framework-for-comparing-two-players)
     -   [Joueur aléatoire: le deuxième joueur est un peu
         avantagé](#joueur-aléatoire-le-deuxième-joueur-est-un-peu-avantagé)
     -   [Joueur aléatoire vs joueur optimisé : certains seeds donnent
@@ -154,6 +156,22 @@ se stabilisent.
 Performance de joueurs
 ======================
 
+Framework for comparing two players
+-----------------------------------
+
+On compare deux joueurs sur le même deck, en en faisant commencer l’un
+puis l’autre. Comme ça ils sont confronté à la même séquence de cartes.
+
+On calcule ensuite les scores, sur un certain nombre de parties, et on
+les visualise de la manière suivante:
+
+    ScopAI:::CompareTwoPlayers(DecisionFunction1 = ScopAI:::RandomDecision, n_games = 200) %>% ScopAI:::PlotPlayerComparison()
+
+    ## Joining, by = c("player", "variable")
+    ## Joining, by = c("player", "variable")
+
+![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+
 Joueur aléatoire: le deuxième joueur est un peu avantagé
 --------------------------------------------------------
 
@@ -176,7 +194,7 @@ Joueur aléatoire: le deuxième joueur est un peu avantagé
       scale_colour_discrete(name ='', labels = c("Deuxième joueur", "Différence", "Premier joueur")) + 
       ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 
-![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 Le deuxième joueur semble avoir un petit avantage.
 
