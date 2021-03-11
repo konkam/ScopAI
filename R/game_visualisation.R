@@ -87,3 +87,26 @@ PlotTheEvolutionOfAGame <- function(game_states) {
               primiera_evolution = gg_primiera,
               settebello_scope_evolution = gg_oners))
 }
+
+PlotPlayerComparison = function(player_comparison = CompareTwoPlayers(DecisionFunction1 = RandomDecision, n_procs = 1)){
+  player_comparison %>% 
+    (function(df){
+      df %>% 
+        select(-ends_with("CI")) %>% 
+        gather(variable, estimate, -player) %>% 
+        left_join(df %>% 
+                    select(player, ends_with("infCI")) %>% 
+                    gather(variable, infCI, -player) %>% 
+                    mutate(variable = gsub("_infCI","", variable))) %>% 
+        left_join(df %>% 
+                    select(player, ends_with("supCI")) %>% 
+                    gather(variable, supCI, -player) %>% 
+                    mutate(variable = gsub("_supCI","", variable)))
+    }) %>% 
+    ggplot(aes(x=as.character(player))) +
+    theme_bw() +
+    facet_wrap(~variable) +
+    geom_point(aes(y = estimate)) + 
+    geom_segment(aes(xend = player, y = infCI, yend = supCI))
+    
+}
