@@ -11,11 +11,10 @@
 -   [Performance de joueurs](#performance-de-joueurs)
     -   [Joueur aléatoire: le deuxième joueur est un peu
         avantagé](#joueur-aléatoire-le-deuxième-joueur-est-un-peu-avantagé)
-    -   [](#section)
     -   [Joueur aléatoire vs joueur optimisé : certains seeds donnent
         systématiquement des
         égalités](#joueur-aléatoire-vs-joueur-optimisé-certains-seeds-donnent-systématiquement-des-égalités)
-    -   [](#section-1)
+    -   [](#section)
 -   [Si jamais on voulait optimiser encore plus la fonction Décision
     Possible Rapide
     (TakeableCardsOnBoardOptimized)](#si-jamais-on-voulait-optimiser-encore-plus-la-fonction-décision-possible-rapide-takeablecardsonboardoptimized)
@@ -53,8 +52,8 @@ sur un scénario réalise en utilisant:
     ## Unit: milliseconds
     ##                                                                               expr
     ##  RunGame(seed = 1, starting_player = 1, DecisionFunction = ScopAI:::DummyDecision)
-    ##       min       lq     mean   median       uq      max neval
-    ##  3.688212 4.026866 4.670242 4.342771 4.669327 10.29162   100
+    ##       min       lq     mean   median      uq      max neval
+    ##  4.412371 4.504276 5.060657 4.621538 4.97807 11.69572   100
 
 Tant que deux fonctions de décision prennent les mêmes décisions elles
 seront évaluées sur la même série de cartes.
@@ -169,7 +168,7 @@ Joueur aléatoire: le deuxième joueur est un peu avantagé
 
 ![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
-Le deuxième joueur semble avantagé !
+First or second players seem to have no advantage
 
 Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
 ------------------------------------------------------------------------------------------
@@ -179,23 +178,23 @@ Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement
     ## # A tibble: 10 x 9
     ##    seed_used number_of_eval player1_started player2_started score1_sum
     ##        <int>          <int>           <int>           <int>      <dbl>
-    ##  1         1             10               6               4         50
-    ##  2         2             10               6               4         12
-    ##  3         3             10               3               7         30
-    ##  4         4             10               5               5         25
-    ##  5         5             10               2               8         24
-    ##  6         6             10               6               4         34
-    ##  7         7             10               6               4         34
-    ##  8         8             10               5               5         10
-    ##  9         9             10               6               4         42
-    ## 10        10             10               5               5         25
+    ##  1         1             10               7               3         44
+    ##  2         2             10               5               5         20
+    ##  3         3             10               6               4         24
+    ##  4         4             10               5               5         20
+    ##  5         5             10               5               5         25
+    ##  6         6             10               3               7         40
+    ##  7         7             10               7               3         40
+    ##  8         8             10               4               6         30
+    ##  9         9             10               5               5         55
+    ## 10        10             10               3               7         40
     ## # … with 4 more variables: score2_sum <dbl>, n_wins_for_1 <int>,
     ## #   n_wins_for_2 <int>, n_ties <int>
 
     ## # A tibble: 1 x 9
     ##   seed_used number_of_eval player1_started player2_started score1_sum score2_sum
     ##   <chr>              <int>           <int>           <int>      <dbl>      <dbl>
-    ## 1 all                  100              50              50        286        143
+    ## 1 all                  100              50              50        338        120
     ## # … with 3 more variables: n_wins_for_1 <int>, n_wins_for_2 <int>, n_ties <int>
 
 Il serait intéressant de comprendre ce qu’a ce deck de si particulier !

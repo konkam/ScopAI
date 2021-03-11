@@ -71,4 +71,10 @@ test_that("Game with two players runs correctly", {
   }
   
   expect_equal(game$game_history %>% lapply(FUN = function(x) x$deck %>% length) %>% unique() %>% unlist() %>% sort, seq(0,30, by = 6))
+  
+  expect_equal(game$game_history %>% .[[2]] %>% .$player1 %>% .$hand %>% length, 2)
+  expect_equal(game$game_history %>% .[[2]] %>% .$player2 %>% .$hand %>% length, 3)
+  game <- RunGameWithDifferentStrategies(seed = 1, starting_player = 2, DecisionFunction1 = RandomDecision)
+  expect_equal(game$game_history %>% .[[2]] %>% .$player1 %>% .$hand %>% length, 3)
+  expect_equal(game$game_history %>% .[[2]] %>% .$player2 %>% .$hand %>% length, 2)
 })
