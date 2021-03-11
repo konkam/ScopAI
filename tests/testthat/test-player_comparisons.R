@@ -3,7 +3,7 @@ test_that("Comparing two players work", {
   expect_type(one_comp, "list")
   expect_equal(nrow(one_comp), 1)
   expect_equal(ncol(one_comp), 3)
-  comp2players_many_games = CompareTwoPlayers(DecisionFunction1 = RandomDecision)
+  comp2players_many_games = CompareTwoPlayers(DecisionFunction1 = RandomDecision, n_procs = 2)
   expect_type(comp2players_many_games, "list")
   expect_equal(nrow(comp2players_many_games), 42)
   expect_equal(ncol(comp2players_many_games), 3)
