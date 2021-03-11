@@ -114,19 +114,21 @@ GiveSetteBelloScoreForAPlayer <- function(stack_player) {
 #' @param player 1 or 2 depending on the player
 #'
 GiveScoreFromStateForAPlayer <- function(game_state, player = 1) {
+  sum(unlist(GiveScoreDetailFromStateForAPlayer(game_state, player)))
+}
+
+GiveScoreDetailFromStateForAPlayer <- function(game_state, player = 1) {
   other_player <- SwitchPlayer(player)
   player_data <- game_state[[GetPlayerName(player)]]
   other_data <- game_state[[GetPlayerName(other_player)]]
-  sum(
-    player_data$scope,
-    GiveSetteBelloScoreForAPlayer(player_data$stack),
-    GivePrimieraScoreForAPlayer(player_data$stack, other_data$stack),
-    GiveCardsScoreForAPlayer(player_data$stack, other_data$stack),
-    GiveDenariScoreForAPlayer(player_data$stack, other_data$stack)
+  list(
+    scope = player_data$scope,
+    settebello = GiveSetteBelloScoreForAPlayer(player_data$stack),
+    primiera = GivePrimieraScoreForAPlayer(player_data$stack, other_data$stack),
+    cards = GiveCardsScoreForAPlayer(player_data$stack, other_data$stack),
+    denari = GiveDenariScoreForAPlayer(player_data$stack, other_data$stack)
   )
-}
-
-
+} 
 # scores as expected values -------------
 #' Give Binomial Probability Of Having At Least K Successes
 #' Helper funcion for expected scores

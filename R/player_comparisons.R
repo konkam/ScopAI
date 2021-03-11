@@ -11,11 +11,11 @@
 #' @return
 #'
 #' @examples
-CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7) {
+CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7, detailed_output = FALSE) {
   if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
   parallel::mclapply(
     X = 1:n_pair_games,
-    FUN = function(x) dplyr::bind_rows(RunOneGame(starting_player = 1, DecisionFunction1, DecisionFunction2), RunOneGame(starting_player = 2, DecisionFunction1, DecisionFunction2)),
+    FUN = function(x) dplyr::bind_rows(RunOneGame(starting_player = 1, DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, detailed_output = detailed_output), RunOneGame(starting_player = 2, DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, detailed_output = detailed_output)),
     mc.set.seed = T,
     mc.preschedule = T,
     mc.cores = n_procs
@@ -34,9 +34,19 @@ CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFun
 #'
 #' @examples
 #' ScopAI:::RunOneGame(starting_player = 1, DecisionFunction1 = ScopAI:::RandomDecision)
-RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL) {
+RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, detailed_output = FALSE) {
   g <- RunGameWithDifferentStrategies(starting_player = starting_player, DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = seed)
-  tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
+  if(detailed_output){
+    detail_score_player_1 = GiveScoreDetailFromStateForAPlayer(g$game_history %>% last(), player = 1)
+    detail_score_player_2 = GiveScoreDetailFromStateForAPlayer(g$game_history %>% last(), player = 2)
+    tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2,
+                   scope_player1 = detail_score_player_1$scope, settebello_player_1 = detail_score_player_1$settebello, primiera_player1 = detail_score_player_1$primiera, cards_player1 = detail_score_player_1$cards, denari_player1 = detail_score_player_1$denari,
+                   scope_player2 = detail_score_player_2$scope, settebello_player_2 = detail_score_player_2$settebello, primiera_player2 = detail_score_player_2$primiera, cards_player2 = detail_score_player_2$cards, denari_player2 = detail_score_player_2$denari)
+  }
+  else {
+    tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
+  }
+  
 }
 
 
