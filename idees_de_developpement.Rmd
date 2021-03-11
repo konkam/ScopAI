@@ -133,11 +133,7 @@ res2 %>%
   ggtitle("Stabilisation du score moyen pour des joueurs aléatoires")
 ```
 
-
-Le deuxième joueur semble avantagé !
-
-
-##
+First or second players seem to have no advantage
 
 ## Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
 
