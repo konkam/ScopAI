@@ -1,3 +1,16 @@
+#' Run several games among two players and extract scores
+#' 
+#' Games a run in parallel, and random numbers are dealt with correctly among the different workers. Note that the code does not run in parallel on Windows at the moment.
+#'
+#' @param DecisionFunction1 
+#' @param DecisionFunction2 
+#' @param seed 
+#' @param n_pair_games 
+#' @param n_procs 
+#'
+#' @return
+#'
+#' @examples
 CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7) {
   if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
   parallel::mclapply(
@@ -10,6 +23,17 @@ CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFun
     dplyr::bind_rows()
 }
 
+#' Run one game among two players and extract scores
+#'
+#' @param starting_player 
+#' @param DecisionFunction1 
+#' @param DecisionFunction2 
+#' @param seed 
+#'
+#' @return
+#'
+#' @examples
+#' RunOneGame(starting_player = 1, DecisionFunction1 = ScopAI:::RandomDecision)
 RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL) {
   g <- RunGameWithDifferentStrategies(starting_player = starting_player, DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = seed)
   tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
