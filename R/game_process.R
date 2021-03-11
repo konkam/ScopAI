@@ -51,7 +51,7 @@ RunGameWithDifferentStrategies <- function(starting_player = 1,
                                            DecisionFunction1,
                                            DecisionFunction2 = DecisionFunction1,
                                            seed = NULL) {
-  game_state <- InitialiseGameState(seed = seed)
+  game_state <- InitialiseGameState(seed = seed, starting_player = starting_player)
   current_player <- starting_player
   game_states <- list()
   game_states[[game_state$turn]] <- game_state
