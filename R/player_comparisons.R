@@ -33,7 +33,7 @@ CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFun
 #' @return
 #'
 #' @examples
-#' RunOneGame(starting_player = 1, DecisionFunction1 = ScopAI:::RandomDecision)
+#' ScopAI:::RunOneGame(starting_player = 1, DecisionFunction1 = ScopAI:::RandomDecision)
 RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL) {
   g <- RunGameWithDifferentStrategies(starting_player = starting_player, DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = seed)
   tibble::tibble(starting_player = starting_player, score_player_1 = g$score_player1, score_player_2 = g$score_player2)
