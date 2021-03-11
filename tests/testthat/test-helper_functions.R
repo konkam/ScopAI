@@ -39,3 +39,10 @@ test_that("The function to switch players works", {
 test_that("For any game, there are 5456 possibilities for a player's hand if you don't know it", {
   expect_equal(length(GetPossibleHandsOfAPlayer(InitialiseGameState(), 2)), 5456)
 })
+
+test_that("Even/odd functions work", {
+  expect_true(is_even(2))
+  expect_false(is_even(5))
+  expect_false(is_odd(10))
+  expect_true(is_odd(21))
+})
