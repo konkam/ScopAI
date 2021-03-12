@@ -105,8 +105,10 @@ PlotPlayerComparison = function(player_comparison = CompareTwoPlayers(DecisionFu
     }) %>% 
     ggplot(aes(x=as.character(player))) +
     theme_bw() +
-    facet_wrap(~variable) +
+    facet_wrap(~variable, scales = "free_y") +
     geom_point(aes(y = estimate)) + 
-    geom_segment(aes(xend = player, y = infCI, yend = supCI))
+    geom_segment(aes(xend = player, y = infCI, yend = supCI)) + 
+    ylab("Estimate (95 CI)") + 
+    xlab("Player")
     
 }
