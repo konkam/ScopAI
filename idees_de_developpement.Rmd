@@ -126,6 +126,7 @@ On calcule ensuite les scores, sur un certain nombre de parties, et on les visua
 ScopAI:::CompareTwoPlayers(DecisionFunction1 = ScopAI:::RandomDecision, n_games = 200) %>% ScopAI:::PlotPlayerComparison()
 ```
 
+Même chose pour plus de joueurs
 
 ## Joueur aléatoire: le deuxième joueur est un peu avantagé
 
@@ -154,6 +155,19 @@ res2 %>%
 ```
 
 Le deuxième joueur semble avoir un petit avantage.
+
+## Joueur optimisable
+
+On compare trois versions du joueur optimisable de base. C'est un joueur qui choisit soit de prendre l'option qui rapporte le plus de denari, soit celle qui en rapporte le moins, et ceci avec une probabilité variable. On compare ici trois versions différentes: probabilité de prendre le pli avec plus de denari de 0.5, 4.539787e-05, 0.9999546. On ajoute aussi comme joueur 4 le joueur aléatoire. 
+
+```{r}
+ScopAI:::CompareNPlayers(DecisionFunctions = c(function(x, y) ScopAI:::OptimisableDecision(x, y, 0), function(x, y) ScopAI:::OptimisableDecision(x, y, 10), function(x, y) ScopAI:::OptimisableDecision(x, y, -10), ScopAI:::RandomDecision), n_games = 1000) %>% ScopAI:::PlotPlayerComparison()
+```
+
+Comme on pourrait s'y attendre, choisir systématiquement le pli avec le moins de denari ne semble pas une stratégie très efficace, tandis que choisir systématiquement le pli avec le plus de denari s'avère un peu mieux que de jouer aléatoirement.
+
+Cela montre que la performance du joueur optimisable dépend de la valeur du paramètre à optimiser, et qu'on peut espérer trouver une bonne valeur pour ce paramètre.
+Rien par contre ne dit que l'optimisation de ce paramètre soit convexe, naivement on pourrait penser que la valeur optimale de ce paramètre soit au bord de son ensemble de définition (-Inf, pour une probabilité de 1).
 
 
 ## Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités

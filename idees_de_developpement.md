@@ -13,6 +13,7 @@
         players](#framework-for-comparing-two-players)
     -   [Joueur aléatoire: le deuxième joueur est un peu
         avantagé](#joueur-aléatoire-le-deuxième-joueur-est-un-peu-avantagé)
+    -   [Joueur optimisable](#joueur-optimisable)
     -   [Joueur aléatoire vs joueur optimisé : certains seeds donnent
         systématiquement des
         égalités](#joueur-aléatoire-vs-joueur-optimisé-certains-seeds-donnent-systématiquement-des-égalités)
@@ -172,6 +173,8 @@ les visualise de la manière suivante:
 
 ![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
+Même chose pour plus de joueurs
+
 Joueur aléatoire: le deuxième joueur est un peu avantagé
 --------------------------------------------------------
 
@@ -197,6 +200,35 @@ Joueur aléatoire: le deuxième joueur est un peu avantagé
 ![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 Le deuxième joueur semble avoir un petit avantage.
+
+Joueur optimisable
+------------------
+
+On compare trois versions du joueur optimisable de base. C’est un joueur
+qui choisit soit de prendre l’option qui rapporte le plus de denari,
+soit celle qui en rapporte le moins, et ceci avec une probabilité
+variable. On compare ici trois versions différentes: probabilité de
+prendre le pli avec plus de denari de 0.5, 4.539787e-05, 0.9999546. On
+ajoute aussi comme joueur 4 le joueur aléatoire.
+
+    ScopAI:::CompareNPlayers(DecisionFunctions = c(function(x, y) ScopAI:::OptimisableDecision(x, y, 0), function(x, y) ScopAI:::OptimisableDecision(x, y, 10), function(x, y) ScopAI:::OptimisableDecision(x, y, -10), ScopAI:::RandomDecision), n_games = 1000) %>% ScopAI:::PlotPlayerComparison()
+
+    ## Joining, by = c("player", "variable")
+    ## Joining, by = c("player", "variable")
+
+![](idees_de_developpement_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+
+Comme on pourrait s’y attendre, choisir systématiquement le pli avec le
+moins de denari ne semble pas une stratégie très efficace, tandis que
+choisir systématiquement le pli avec le plus de denari s’avère un peu
+mieux que de jouer aléatoirement.
+
+Cela montre que la performance du joueur optimisable dépend de la valeur
+du paramètre à optimiser, et qu’on peut espérer trouver une bonne valeur
+pour ce paramètre. Rien par contre ne dit que l’optimisation de ce
+paramètre soit convexe, naivement on pourrait penser que la valeur
+optimale de ce paramètre soit au bord de son ensemble de définition
+(-Inf, pour une probabilité de 1).
 
 Joueur aléatoire vs joueur optimisé : certains seeds donnent systématiquement des égalités
 ------------------------------------------------------------------------------------------
