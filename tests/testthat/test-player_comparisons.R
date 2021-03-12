@@ -16,10 +16,8 @@ test_that("Comparing two players work", {
   expect_equal(nrow(comp2players_many_games), 28)
   expect_gt(ncol(comp2players_many_games), 3)
   
-  one_comp = RunTwoGamesSameDeck(DecisionFunction1 = RandomDecision)
+  one_comp = CompareTwoPlayersOneDeck(DecisionFunction1 = RandomDecision)
   expect_equal(nrow(one_comp), 2)
-  expect_equal(ncol(one_comp), 5)
-  comp2players_many_games = RunManyPairedGamesparallel(DecisionFunction1 = RandomDecision, n_procs = 2)
+  comp2players_many_games = RunManyPairedGamesparallel(DecisionFunctions = c(RandomDecision, RandomDecision), n_procs = 2)
   expect_equal(nrow(comp2players_many_games), 42)
-  expect_equal(ncol(comp2players_many_games), 6)
 })

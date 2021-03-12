@@ -35,18 +35,8 @@ RunManyGamesparallel <- function(DecisionFunction1, DecisionFunction2 = Decision
 #' @param n_procs
 #' @param detailed_output
 #'
-RunManyPairedGamesparallel <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7, detailed_output = FALSE) {
-  if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
-  parallel::mclapply(
-    X = 1:n_pair_games,
-    FUN = function(x) {
-      RunTwoGamesSameDeck(DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = NULL, detailed_output = detailed_output) %>% dplyr::mutate(deck_id = x)
-    },
-    mc.set.seed = T,
-    mc.preschedule = T,
-    mc.cores = n_procs
-  ) %>%
-    dplyr::bind_rows()
+RunManyPairedGamesparallelTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_pair_games = 7 * 3, n_procs = 7, detailed_output = FALSE) {
+  RunManyPairedGamesparallel(DecisionFunctions = c(DecisionFunction1, DecisionFunction2), seed = seed, n_pair_games = n_pair_games, n_procs = n_procs, detailed_output = detailed_output) 
 }
 
 #' Run one game among two players and extract scores
@@ -78,8 +68,7 @@ RunOneGame <- function(starting_player = 1, DecisionFunction1, DecisionFunction2
   }
 }
 
-RunTwoGamesSameDeck <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, detailed_output = FALSE) {
-  deck <- ShuffleNewDeck(seed)
+CompareTwoPlayersOneDeck <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, deck = ShuffleNewDeck(seed), detailed_output = FALSE) {
   res <- dplyr::bind_rows(
     RunOneGame(starting_player = 1, DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = NULL, detailed_output = detailed_output),
     RunOneGame(starting_player = 2, DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = NULL, detailed_output = detailed_output),
@@ -88,20 +77,51 @@ RunTwoGamesSameDeck <- function(DecisionFunction1, DecisionFunction2 = DecisionF
                  score_starting = c(res$score_player_1[1], res$score_player_2[2]), 
                  score_finishing = c(res$score_player_1[2], res$score_player_2[1]),
                  victory_starting = c(res$score_player_1[1] > res$score_player_2[1], res$score_player_2[2] > res$score_player_1[2]),
-                 victory_finishing = c(res$score_player_1[2] > res$score_player_2[2], res$score_player_2[1] > res$score_player_1[1])
-                 )
+                 victory_finishing = c(res$score_player_1[2] > res$score_player_2[2], res$score_player_2[1] > res$score_player_1[1]),
+                 tie_starting = c(res$score_player_1[1] == res$score_player_2[1], res$score_player_2[2] == res$score_player_1[2]),
+                 tie_finishing = c(res$score_player_1[2] == res$score_player_2[2], res$score_player_2[1] == res$score_player_1[1])
+  )
+}
+
+CompareNPlayersOneDeck = function(DecisionFunctions, seed = NULL, deck = ShuffleNewDeck(seed), detailed_output = FALSE){
+  N = length(DecisionFunctions)
+  if (N<2) stop("You need to provide at least two players in DecisionFunctions")
+  combn(1:N, 2, simplify = F) %>% 
+    lapply(function(pair){ 
+      CompareTwoPlayersOneDeck(DecisionFunction1 = DecisionFunctions[[pair[1]]], DecisionFunction2 = DecisionFunctions[[pair[2]]], seed = seed, deck = deck, detailed_output = detailed_output) %>% 
+             dplyr::mutate(player = c(pair[1], pair[2]))
+      }) %>% 
+        dplyr::bind_rows()
+}
+RunManyPairedGamesparallel <- function(DecisionFunctions, seed = NULL, n_pair_games = 7 * 3, n_procs = 7, detailed_output = FALSE) {
+  if (!is.null(seed)) set.seed(seed, kind = "L'Ecuyer-CMRG")
+  parallel::mclapply(
+    X = 1:n_pair_games,
+    FUN = function(x) {
+      CompareNPlayersOneDeck(DecisionFunctions, seed = NULL, detailed_output = detailed_output) %>% dplyr::mutate(deck_id = x)
+    },
+    mc.set.seed = T,
+    mc.preschedule = T,
+    mc.cores = n_procs
+  ) %>%
+    dplyr::bind_rows()
 }
 
 
+
 CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFunction1, seed = NULL, n_games = 10, paired_comparison = TRUE, n_procs = 7, detailed_output = F) {
+  CompareNPlayers(DecisionFunctions = c(DecisionFunction1, DecisionFunction2), seed = seed, n_games = n_games, paired_comparison = paired_comparison, n_procs = n_procs, detailed_output = detailed_output)
+}
+
+CompareNPlayers <- function(DecisionFunctions, seed = NULL, n_games = 10, paired_comparison = TRUE, n_procs = 7, detailed_output = F) {
   if (is_odd(n_games)) stop("Better to provide an even number of games to offset possible effects of play order advantage")
-
+  
   n_games <- n_games / 2
-  matches <- RunManyPairedGamesparallel(DecisionFunction1 = DecisionFunction1, DecisionFunction2 = DecisionFunction2, seed = seed, n_procs = n_procs, detailed_output = detailed_output, n_pair_games = n_games)
-
-
+  matches <- RunManyPairedGamesparallel(DecisionFunctions, seed = seed, n_procs = n_procs, detailed_output = detailed_output, n_pair_games = n_games)
+  
+  
   return(tibble::tibble(
-    player = c(1, 2),
+    player = matches$player %>% unique(),
     average_starting_score = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = mean(score_starting)) %>% .$s,
     average_starting_score_infCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(score_starting, probs = 0.025)) %>% .$s,
     average_starting_score_supCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(score_starting, probs = 0.975)) %>% .$s,
@@ -114,10 +134,14 @@ CompareTwoPlayers <- function(DecisionFunction1, DecisionFunction2 = DecisionFun
     victories_finishing = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = mean(victory_finishing)) %>% .$s,
     victories_finishing_infCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(victory_finishing, probs = 0.025)) %>% .$s,
     victories_finishing_supCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(victory_finishing, probs = 0.975)) %>% .$s,
+    ties_starting = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = mean(tie_starting)) %>% .$s,
+    ties_starting_infCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(tie_starting, probs = 0.025)) %>% .$s,
+    ties_starting_supCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(tie_starting, probs = 0.975)) %>% .$s,
+    ties_finishing = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = mean(tie_finishing)) %>% .$s,
+    ties_finishing_infCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(tie_finishing, probs = 0.025)) %>% .$s,
+    ties_finishing_supCI = matches %>% dplyr::group_by(player) %>% dplyr::summarise(s = quantile(tie_finishing, probs = 0.975)) %>% .$s
   ))
 }
-
-
 
 # If we want to understand more, we should detail the different scores for each fight (Denari, cards, primiera, scope, ...)
 Compare2DecisionStrategies <- function(DecisionFunction1,
