@@ -191,3 +191,8 @@ GetPossibleHandsOfAPlayer <- function(game_state, player_to_guess_the_hand) {
   if (cards_of_the_player == 0) cards_of_the_player <- 3
   combn(union(game_state$deck, true_hand_of_player), m = cards_of_the_player, simplify = F)
 }
+
+ShowCards <- function(cards) {
+  if (is.null(cards)) return("none")
+  paste(cards, collapse = " ")
+} 
