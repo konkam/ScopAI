@@ -129,6 +129,14 @@ GiveScoreDetailFromStateForAPlayer <- function(game_state, player = 1) {
     denari = GiveDenariScoreForAPlayer(player_data$stack, other_data$stack)
   )
 } 
+
+
+GiveScoreDetailFromStateForAPlayerForHuman <- function(game_state, player = 1) {
+  score_as_list <- GiveScoreDetailFromStateForAPlayer(game_state, player)
+  sapply(names(score_as_list), function(sco) paste(sco, score_as_list[[sco]], sep = ": ")) %>% 
+    paste(collapse = " / ")
+} 
+
 # scores as expected values -------------
 #' Give Binomial Probability Of Having At Least K Successes
 #' Helper funcion for expected scores
