@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyWidgets)
+library(shinyjs)
 library(ggplot2)
 library(glue)
 library(dplyr)
@@ -9,7 +10,6 @@ library(ScopAI)
 # directories ------
 
 # load data -------
-
 
 
 # Define UI ----
@@ -52,6 +52,7 @@ ui <- fluidPage(
       h3(textOutput("end_game"), style = "color:brown"),
       h5(em(textOutput("display_your_last_action"), style = "color:blue")),
       h5(em(textOutput("display_general_info"))),
+      useShinyjs(),
       radioButtons("decision",
                    label = h5("Choice"),
                    choices = list("This is a mock" = "mock"), 
@@ -85,10 +86,8 @@ server <- function(input, output, session) {
     values$last_action_other <- ""
     values$last_action_you <- ""
     values$endgame <- ""
-    updateRadioButtons(session, "decision",
-                       choices = list("This is a mock" = "mock"),
-                       selected = "mock")
-    values$dealt <- F
+    showElement("next_play", time = 0)
+    hideElement("decision")
     values$parameters <- glue("Parameters of the game: your opponent is the {input$decision_type}, 
     the seed used is {input$seed_entered},
                the first player is {c('you', 'your opponent')[as.numeric(input$starting_player)]}.
@@ -106,11 +105,17 @@ server <- function(input, output, session) {
   
   observeEvent(input$next_play, ignoreNULL = FALSE, {
     if (values$wait_the_next == 3) {
+      showElement("decision")
       if (values$game_state$turn == 37) {
-        values$endgame <- glue("That was the last card! The remaining board {ShowCards(values$game_state$board)}
-        went to {c('you', 'your opponent')[values$game_state$last_taker]}. The party is over, the score
-        is {GiveScoreFromStateForAPlayer(values$game_state, 1)} for you
-        and {GiveScoreFromStateForAPlayer(values$game_state, 2)} for your opponent. Press New Game to play again.")
+        hideElement("decision", time = 0)
+        hideElement("next_play", time = 0)
+        values$endgame <- glue("This was the last card! The remaining board {ShowCards(values$game_state$board)}
+        went to {c('you', 'your opponent')[values$game_state$last_taker]}. The party is over.
+        Your score is {GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 1)} for a total of
+        {GiveScoreFromStateForAPlayer(values$game_state, 1)}.
+        Your opponent score is {GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 2)} for a total of
+        {GiveScoreFromStateForAPlayer(values$game_state, 2)}.
+                               Press New Game to play again.")
         values$game_state <- FinishGame(values$game_state)
         values$last_action_other <- ""
         values$last_action_you <- ""
@@ -118,6 +123,7 @@ server <- function(input, output, session) {
         values$wait_the_next <- 4 # at the end of the game, a next is doing nothing
       } else { # else of the if about turn 37
         if (values$game_state$turn %in% (6*1:5 + 1) & values$last_action_general == "") {
+          hideElement("decision", time = 0)
           values$game_state <- DealPlayersCards(game_state = values$game_state, starting_player = input$starting_player)
           values$last_action_general <- "New cards have been dealt"
           if (values$game_state$turn == 31) values$last_action_general <- "The last cards have been dealt!"
@@ -125,6 +131,7 @@ server <- function(input, output, session) {
           values$last_action_you <- ""
         } else { # else of if about the need to deal new cards
           if (values$current_player == 2) {
+            hideElement("decision", time = 0)
             if (input$decision_type == "Random Player") opponent_decision <- RandomDecision(values$game_state, 2)
             if (input$decision_type == "Optimizer") opponent_decision <- OptimizedDecision(values$game_state, 2)
             if (input$decision_type == "Anticipator") opponent_decision <- OptimizedDecisionNPlus1(values$game_state, 2, input$anticipator_parameter)
@@ -151,6 +158,7 @@ server <- function(input, output, session) {
               values$your_decision <- possible_decisions[[input$decision]]
               values$game_state <- PlayCard(values$game_state, 1, decision = values$your_decision)
               print("a card was played by you")
+              hideElement("decision", time = 0)
               values$last_action_other <- ""
               values$last_action_general <- ""
               values$last_action_you <- glue("You've just played {values$your_decision$play} and taken
@@ -192,12 +200,12 @@ server <- function(input, output, session) {
     print(glue("{values$parameters}"))
   })
   
-  output$end_game <- renderPrint({
+  output$end_game <- renderText({
     print(glue("{values$endgame}"))
   })
   
-  
-  }
+
+}
   # Run the app ----
   shinyApp(ui = ui, server = server)
   
