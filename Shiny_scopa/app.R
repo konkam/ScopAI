@@ -23,7 +23,7 @@ ui <- fluidPage(
                             choices = list("Random Player" = "Random Player",
                                            "Optimizer" = "Optimizer",
                                            "Anticipator" = "Anticipator"),
-                            selected = "Random Player"),
+                            selected = "Optimizer"),
                conditionalPanel(condition = "input.decision_type == 'Anticipator'",
                                 radioButtons("anticipator_parameter", h4("How to anticipate"),
                                              choices = list("Cheater" = "cheater",
@@ -38,23 +38,47 @@ ui <- fluidPage(
                             choices = list("You" = 1,
                                            "Your opponent" = 2),
                             selected = 2),
-               actionButton("newgame", "New Game", class = "btn-lg")
+               actionButton("newgame", "New Game", class = "btn-lg"),
+               sliderInput("pixel_cards",
+                           label = "Zoom on cards",
+                           value = 50,
+                           min = 0,
+                           max = 100)
         ) # end of first column
       ), # end of fluidrow
       
     ), # end of sidebarPanel
     mainPanel(
-      h5(textOutput("game_parameters"), style = "color:grey"),
-      h4(textOutput("display_hand_other"), style = "color:red"),
-      h5(em(textOutput("display_last_action_opponent"), style = "color:red")),
-      h4(textOutput("display_board"), style = "color:green"),
-      h4(textOutput("display_hand"), style = "color:blue"),
-      h3(textOutput("end_game"), style = "color:brown"),
-      h5(em(textOutput("display_your_last_action"), style = "color:blue")),
-      h5(em(textOutput("display_general_info"))),
       useShinyjs(),
+      h4(textOutput("game_parameters"), style = "color:grey"),
+      h4(textOutput("display_hand_other"), style = "color:red"),
+      uiOutput("opponent_hand_0"),
+      uiOutput("opponent_hand_1"),
+      uiOutput("opponent_hand_2"),
+      uiOutput("opponent_hand_3"),
+      h4(em(textOutput("display_last_action_opponent"), style = "color:red")),
+      h4(textOutput("display_board"), style = "color:green"),
+      fluidRow(
+        column(1, uiOutput("board_1")),
+        column(1, uiOutput("board_2")),
+        column(1, uiOutput("board_3")),
+        column(1, uiOutput("board_4")),
+        column(1, uiOutput("board_5")),
+        column(1, uiOutput("board_6")),
+        column(1, uiOutput("board_7")),
+        column(1, uiOutput("board_8")),
+        column(1, uiOutput("board_9")),
+        column(1, uiOutput("board_10"))),
+      h4(textOutput("display_hand"), style = "color:blue"),
+      fluidRow(
+        column(1, uiOutput("your_hand_1")),
+        column(1, uiOutput("your_hand_2")),
+        column(1, uiOutput("your_hand_3"))),
+      h4(textOutput("end_game"), style = "color:brown"),
+      h4(em(textOutput("display_your_last_action"), style = "color:blue")),
+      h4(em(textOutput("display_general_info"))),
       radioButtons("decision",
-                   label = h5("Choice"),
+                   label = h3("Choice", style = "color:blue"),
                    choices = list("This is a mock" = "mock"), 
                    selected = "mock"),
       actionButton("next_play", "Next", class = "btn-lg")
@@ -74,7 +98,8 @@ server <- function(input, output, session) {
     last_action_general = NULL,
     endgame = NULL,
     your_decision = NULL,
-    parameters = NULL
+    parameters = NULL,
+    pixel_for_cards = NULL
   )
   
   # New game button is clicked (this also runs when the app first loads)
@@ -85,13 +110,27 @@ server <- function(input, output, session) {
     values$last_action_general <- "The first cards have been dealt. Click on the Next button to start playing"
     values$last_action_other <- ""
     values$last_action_you <- ""
+    values$your_decision <- NULL
     values$endgame <- ""
+    values$pixel_for_cards <- input$pixel_cards
     showElement("next_play", time = 0)
     hideElement("decision")
+    updateRadioButtons(session, "decision",
+                       choices = list("This is a mock" = "mock"),
+                       selected = "mock")
     values$parameters <- glue("Parameters of the game: your opponent is the {input$decision_type}, 
     the seed used is {input$seed_entered},
                the first player is {c('you', 'your opponent')[as.numeric(input$starting_player)]}.
                Press New Game if you want to change the parameters")
+  })
+  
+  observeEvent(input$next_play, {
+    if (values$wait_the_next == 1) {
+      values$wait_the_next <- 2
+    }
+    if (values$wait_the_next == 2) {
+      values$wait_the_next <- 3
+    }
   })
   
   observeEvent(input$next_play, {
@@ -173,19 +212,101 @@ server <- function(input, output, session) {
     print(paste("game turn is ", values$game_state$turn))
   })
   
+  observeEvent(input$pixel_cards, {
+    values$pixel_for_cards <- input$pixel_cards
+  })
   
   output$display_hand_other <- renderPrint({
-    print(glue("Opponent hand: {length(GetPlayerHand(values$game_state, 2))} cards"))
+    print(glue("Opponent hand: {length(GetPlayerHand(values$game_state, 2))} cards")) 
   })
+  
+  output$opponent_hand_0 <- renderUI({
+    if (length(GetPlayerHand(values$game_state, 2)) == 0) img(src = "zero_card.png", 
+                                                              height = paste0(values$pixel_for_cards*3, "px"), alt = "0 card")
+  })
+  
+  output$opponent_hand_1 <- renderUI({
+    if (length(GetPlayerHand(values$game_state, 2)) == 1) img(src = "one_card.png", 
+                                                              height = paste0(values$pixel_for_cards*3, "px"), alt = "1 card")
+  })
+  
+  output$opponent_hand_2 <- renderUI({
+    if (length(GetPlayerHand(values$game_state, 2)) == 2) img(src = "two_cards.png",
+                                                              height = paste0(values$pixel_for_cards*3, "px"), alt = "2 cards")
+  })
+  
+  
+  output$opponent_hand_3 <- renderUI({
+    if (length(GetPlayerHand(values$game_state, 2)) == 3) img(src = "three_cards.png", 
+                                                              height = paste0(values$pixel_for_cards*3, "px"), alt = "3 cards")
+  })
+  
   output$display_board <- renderPrint({
     if (length(values$game_state$board) == 0 & values$game_state$turn <= 36) {
       print(glue("SCOPA!"))
     } else {
       print(glue("Board: {ShowCards(values$game_state$board)}"))
     }
-  }) 
+  })
+  output$board_1 <- renderUI({
+    card <- values$game_state$board[1]
+    img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_2 <- renderUI({
+    card <- values$game_state$board[2]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_3 <- renderUI({
+    card <- values$game_state$board[3]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_4 <- renderUI({
+    card <- values$game_state$board[4]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_5 <- renderUI({
+    card <- values$game_state$board[5]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_6 <- renderUI({
+    card <- values$game_state$board[6]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_7 <- renderUI({
+    card <- values$game_state$board[7]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_8 <- renderUI({
+    card <- values$game_state$board[8]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_9 <- renderUI({
+    card <- values$game_state$board[9]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$board_10 <- renderUI({
+    card <- values$game_state$board[10]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  
+  output$your_hand_1 <- renderUI({
+    # tags$div(img(src = "C1.png", height = paste0(values$pixel_for_cards*3, "px")),
+    #          img(src = "C2.png", height = paste0(values$pixel_for_cards*3, "px")), 
+    #          img(src = "C3.png", height = paste0(values$pixel_for_cards*3, "px")))
+    card <- GetPlayerHand(values$game_state, 1)[1]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$your_hand_2 <- renderUI({
+    card <- GetPlayerHand(values$game_state, 1)[2]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  output$your_hand_3 <- renderUI({
+    card <- GetPlayerHand(values$game_state, 1)[3]
+    if (!is.na(card)) img(src = paste0(card, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
+  })
+  
   output$display_hand <- renderPrint({
-    print(glue("Your hand: {ShowCards(GetPlayerHand(values$game_state, 1))}"))
+    print(glue("Your hand: {ShowCards(GetPlayerHand(values$game_state, 1))}")) 
   })
   output$display_last_action_opponent <- renderPrint({
     print(glue("{values$last_action_other}"))
