@@ -1,3 +1,4 @@
+
 library(shiny)
 library(shinyWidgets)
 library(shinyjs)
@@ -126,6 +127,16 @@ server <- function(input, output, session) {
     values$endgame <- ""
     values$pixel_for_cards <- input$pixel_cards
     showElement("next_play", time = 0)
+    showElement("board_1", time = 0)
+    showElement("board_2", time = 0)
+    showElement("board_3", time = 0)
+    showElement("board_4", time = 0)
+    showElement("board_5", time = 0)
+    showElement("board_6", time = 0)
+    showElement("board_7", time = 0)
+    showElement("board_8", time = 0)
+    showElement("board_9", time = 0)
+    showElement("board_10", time = 0)
     hideElement("decision", time = 0)
     hideElement("opponent_play", time = 0)
     updateRadioButtons(session, "decision",
