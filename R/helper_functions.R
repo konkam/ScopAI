@@ -192,6 +192,14 @@ GetPossibleHandsOfAPlayer <- function(game_state, player_to_guess_the_hand) {
   combn(union(game_state$deck, true_hand_of_player), m = cards_of_the_player, simplify = F)
 }
 
+#' Show Cards
+#' In an easy readable way
+#'
+#' @param cards 
+#'
+#' @return
+#' @export
+#'
 ShowCards <- function(cards) {
   if (is.null(cards)) return("none")
   paste(cards, collapse = " ")

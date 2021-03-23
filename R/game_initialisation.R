@@ -34,6 +34,7 @@ DealBoardCards <- function(game_state) {
 #'
 #' @param seed Starting seed
 #' @param starting_player 1 or 2 according to which player starts
+#' @export
 #'
 InitialiseGameState <- function(seed = NULL, starting_player = 1) {
   deck = ShuffleNewDeck(seed)
