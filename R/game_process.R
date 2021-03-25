@@ -155,7 +155,7 @@ PlayCard <- function(game_state, player, decision, check_for_validity =  F, chec
     game_state[[pla]]$stack <- c(game_state[[pla]]$stack, decision$play, decision$take) %>% SortAccordingToGame()
     game_state$board <- game_state$board[!game_state$board %in% decision$take]
     game_state$last_taker <- player
-    if (length(game_state$board) == 0 & game_state$turn <= 36) game_state[[pla]]$scope <- game_state[[pla]]$scope + 1
+    if (length(game_state$board) == 0 & game_state$turn < 36) game_state[[pla]]$scope <- game_state[[pla]]$scope + 1
   } else {
     game_state$board <- c(game_state$board, decision$play) %>% SortAccordingToGame()
   }
