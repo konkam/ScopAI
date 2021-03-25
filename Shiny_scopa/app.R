@@ -15,11 +15,18 @@ library(ScopAI)
 
 # Define UI ----
 ui <- fluidPage(
-  titlePanel("Shiny Scopa"),
+  titlePanel(a("ScopAI", href = "https://github.com/konkam/ScopAI", target="_blank")),
+  h4("A project (currently in development), developed by ",
+     a("konkam", href = "https://github.com/konkam", target ="_blank"), 
+     " and ",
+     a("tzh", href = "https://github.com/theozhirsch", target ="_blank"),
+     "to use machine learning for the game of ",
+     a("Scopa", href = "https://en.wikipedia.org/wiki/Scopa", target ="_blank")),
   sidebarLayout(
     sidebarPanel(
       fluidRow(
-        column(width = 6,
+        # column(width = 6,
+               h2("Parameters of the game", style = "color:brown"),
                radioButtons("decision_type", h4("Choose your opponent"),
                             choices = list("Random Player" = "Random Player",
                                            "Optimizer" = "Optimizer",
@@ -39,13 +46,14 @@ ui <- fluidPage(
                             choices = list("You" = 1,
                                            "Your opponent" = 2),
                             selected = 2),
+               h4("After changing the parameters, hit New Game"),
                actionButton("newgame", "New Game", class = "btn-lg"),
                sliderInput("pixel_cards",
                            label = "Zoom on cards",
                            value = 50,
                            min = 0,
                            max = 100)
-        ) # end of first column
+        # ) # end of first column
       ), # end of fluidrow
       
     ), # end of sidebarPanel
