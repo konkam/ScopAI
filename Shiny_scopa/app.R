@@ -185,12 +185,12 @@ server <- function(input, output, session) {
         hideElement("board_10", time = 0)
         values$endgame <- glue("This was the last card! The remaining board {ShowCards(values$game_state$board)}
         went to {c('you', 'your opponent')[values$game_state$last_taker]}. The party is over.
-        Your score is {GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 1)} for a total of
-        {GiveScoreFromStateForAPlayer(values$game_state, 1)}.
-        Your opponent score is {GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 2)} for a total of
-        {GiveScoreFromStateForAPlayer(values$game_state, 2)}.
+        Your score is {ScopAI:::GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 1)} for a total of
+        {ScopAI:::GiveScoreFromStateForAPlayer(values$game_state, 1)}.
+        Your opponent score is {ScopAI:::GiveScoreDetailFromStateForAPlayerForHuman(values$game_state, 2)} for a total of
+        {ScopAI:::GiveScoreFromStateForAPlayer(values$game_state, 2)}.
                                Press New Game to play again.")
-        values$game_state <- FinishGame(values$game_state)
+        values$game_state <- ScopAI:::FinishGame(values$game_state)
         values$last_action_other <- ""
         values$last_action_you <- ""
         values$deal_action <- ""
@@ -198,7 +198,7 @@ server <- function(input, output, session) {
       } else { # else of the if about turn 37
         if (values$game_state$turn %in% (6*1:5 + 1) & values$deal_action == "") {
           hideElement("decision", time = 0)
-          values$game_state <- DealPlayersCards(game_state = values$game_state, starting_player = input$starting_player)
+          values$game_state <- ScopAI:::DealPlayersCards(game_state = values$game_state, starting_player = input$starting_player)
           values$deal_action <- "New cards have been dealt"
           if (values$game_state$turn == 31) values$deal_action <- "The last cards have been dealt!"
           values$last_action_other <- ""
@@ -213,14 +213,14 @@ server <- function(input, output, session) {
             values$deal_action <- " " # should not be "", otherwise if turn is a multiple of 6 you will deal cards twice
             
             if (!values$opponent_played) {
-              if (input$decision_type == "Random Player") values$opponent_decision <- RandomDecision(values$game_state, 2)
-              if (input$decision_type == "Optimizer") values$opponent_decision <- OptimizedDecision(values$game_state, 2)
-              if (input$decision_type == "Anticipator") values$opponent_decision <- OptimizedDecisionNPlus1(values$game_state, 2, input$anticipator_parameter)
+              if (input$decision_type == "Random Player") values$opponent_decision <- ScopAI:::RandomDecision(values$game_state, 2)
+              if (input$decision_type == "Optimizer") values$opponent_decision <- ScopAI:::OptimizedDecision(values$game_state, 2)
+              if (input$decision_type == "Anticipator") values$opponent_decision <- ScopAI:::OptimizedDecisionNPlus1(values$game_state, 2, input$anticipator_parameter)
               showElement("opponent_play", time = 0)
               values$opponent_played <- T
             } else {
               hideElement("opponent_play", time = 0)
-              values$game_state <- PlayCard(values$game_state, 2, decision = values$opponent_decision)
+              values$game_state <- ScopAI:::PlayCard(values$game_state, 2, decision = values$opponent_decision)
               values$deal_action <- "" # now you can have "" because the turn has been updated
               print("a card was played by the opponent")
               values$last_action_other <- glue("Your opponent has just played {values$opponent_decision$play} and taken
@@ -232,7 +232,7 @@ server <- function(input, output, session) {
             
           } else { # else of the if player is player 2
             hideElement("opponent_play", time = 0)
-            possible_decisions <- ListAllPossibleDecisions(values$game_state, 1)
+            possible_decisions <- ScopAI:::ListAllPossibleDecisions(values$game_state, 1)
             names(possible_decisions) <- sapply(possible_decisions, function(dec)
               paste("Play", dec$play, "and take", ShowCards(dec$take)))
             
@@ -250,7 +250,7 @@ server <- function(input, output, session) {
                 values$you_played <- T
               } else {
                 hideElement("decision", time = 0)
-                values$game_state <- PlayCard(values$game_state, 1, decision = values$your_decision)
+                values$game_state <- ScopAI:::PlayCard(values$game_state, 1, decision = values$your_decision)
                 values$deal_action <- "" # now you can have "" because the turn has been updated
                 values$current_player <- 2
                 values$wait_the_next <- 2
@@ -275,23 +275,23 @@ server <- function(input, output, session) {
   })
   
   output$opponent_hand_0 <- renderUI({
-    if (length(GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 0) img(src = "zero_card.png", 
+    if (length(ScopAI:::GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 0) img(src = "zero_card.png", 
                                                               height = paste0(values$pixel_for_cards*3, "px"), alt = "0 card")
   })
   
   output$opponent_hand_1 <- renderUI({
-    if (length(GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 1) img(src = "one_card.png", 
+    if (length(ScopAI:::GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 1) img(src = "one_card.png", 
                                                               height = paste0(values$pixel_for_cards*3, "px"), alt = "1 card")
   })
   
   output$opponent_hand_2 <- renderUI({
-    if (length(GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 2) img(src = "two_cards.png",
+    if (length(ScopAI:::GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played == 2) img(src = "two_cards.png",
                                                               height = paste0(values$pixel_for_cards*3, "px"), alt = "2 cards")
   })
   
   
   output$opponent_hand_3 <- renderUI({
-    if ((length(GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played) == 3) img(src = "three_cards.png", 
+    if ((length(ScopAI:::GetPlayerHand(values$game_state, 2)) - 1*values$opponent_played) == 3) img(src = "three_cards.png", 
                                                               height = paste0(values$pixel_for_cards*3, "px"), alt = "3 cards")
   })
   
@@ -379,30 +379,30 @@ server <- function(input, output, session) {
   })
   
   output$your_hand_0 <- renderUI({
-    if (length(GetPlayerHand(values$game_state, 1)) == 0) img(src = "zero_card.png", 
+    if (length(ScopAI:::GetPlayerHand(values$game_state, 1)) == 0) img(src = "zero_card.png", 
                                                               height = paste0(values$pixel_for_cards*3, "px"), alt = "0 card")
   })
   output$your_hand_1 <- renderUI({
-    card <- GetPlayerHand(values$game_state, 1)[1]
+    card <- ScopAI:::GetPlayerHand(values$game_state, 1)[1]
     take_suffix <- ""
     if (values$you_played & card %in% values$your_decision$play) take_suffix <- ifelse(is.null(values$your_decision$take), "_board", "_you")
     if (!is.na(card)) img(src = paste0(card, take_suffix, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
   })
   output$your_hand_2 <- renderUI({
-    card <- GetPlayerHand(values$game_state, 1)[2]
+    card <- ScopAI:::GetPlayerHand(values$game_state, 1)[2]
     take_suffix <- ""
     if (values$you_played & card %in% values$your_decision$play) take_suffix <- ifelse(is.null(values$your_decision$take), "_board", "_you")
     if (!is.na(card)) img(src = paste0(card, take_suffix, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
   })
   output$your_hand_3 <- renderUI({
-    card <- GetPlayerHand(values$game_state, 1)[3]
+    card <- ScopAI:::GetPlayerHand(values$game_state, 1)[3]
     take_suffix <- ""
     if (values$you_played & card %in% values$your_decision$play) take_suffix <- ifelse(is.null(values$your_decision$take), "_board", "_you")
     if (!is.na(card)) img(src = paste0(card, take_suffix, ".png"), height = paste0(values$pixel_for_cards*3, "px"), alt = card)
   })
   
   output$display_hand <- renderPrint({
-    print(glue("Your hand: {ShowCards(GetPlayerHand(values$game_state, 1))}")) 
+    print(glue("Your hand: {ShowCards(ScopAI:::GetPlayerHand(values$game_state, 1))}")) 
   })
   # output$display_last_action_opponent <- renderPrint({
   #   print(glue("{values$last_action_other}"))
