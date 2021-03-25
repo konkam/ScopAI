@@ -220,6 +220,7 @@ server <- function(input, output, session) {
               values$opponent_played <- T
             } else {
               hideElement("opponent_play", time = 0)
+              
               values$game_state <- ScopAI:::PlayCard(values$game_state, 2, decision = values$opponent_decision)
               values$deal_action <- "" # now you can have "" because the turn has been updated
               print("a card was played by the opponent")
@@ -228,6 +229,8 @@ server <- function(input, output, session) {
               values$current_player <- 1
               values$wait_the_next <- 2
               values$opponent_played <- F
+              values$opponent_decision$play <- "calculating"
+              values$opponent_decision$take <- NULL
             }
             
           } else { # else of the if player is player 2
