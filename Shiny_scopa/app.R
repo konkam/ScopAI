@@ -90,6 +90,7 @@ ui <- fluidPage(
         column(1, uiOutput("your_hand_3")),
         column(1, uiOutput("your_hand_0"))),
       h3(textOutput("end_game"), style = "color:brown"),
+      plotOutput("game_recap"),
       h4(em(textOutput("display_your_last_action"), style = "color:blue")),
       fluidRow(
         column(1, actionButton("next_play", "Next", class = "btn-lg")),
@@ -107,6 +108,7 @@ server <- function(input, output, session) {
   values <- reactiveValues(
     current_player = NULL,  
     game_state = NULL,  
+    game_stateS= NULL,  
     wait_the_next = NULL,
     last_action_other = NULL,
     last_action_you = NULL,
@@ -124,6 +126,7 @@ server <- function(input, output, session) {
   observeEvent(input$newgame, ignoreNULL = FALSE, {
     values$current_player <- input$starting_player
     values$game_state <- InitialiseGameState(seed = input$seed_entered, starting_player = values$current_player)
+    values$game_stateS <- list()
     values$wait_the_next <- 1
     values$deal_action <- "The first cards have been dealt. Click on the Next button to start playing"
     values$last_action_other <- ""
@@ -147,6 +150,7 @@ server <- function(input, output, session) {
     showElement("board_10", time = 0)
     hideElement("decision", time = 0)
     hideElement("opponent_play", time = 0)
+    hideElement("game_recap", time = 0)
     updateRadioButtons(session, "decision",
                        choices = list("This is a mock" = "mock"),
                        selected = "mock")
@@ -199,6 +203,8 @@ server <- function(input, output, session) {
         {ScopAI:::GiveScoreFromStateForAPlayer(values$game_state, 2)}.
                                Press New Game to play again.")
         values$game_state <- ScopAI:::FinishGame(values$game_state)
+
+                showElement("game_recap", time = 0)
         values$last_action_other <- ""
         values$last_action_you <- ""
         values$deal_action <- ""
@@ -275,6 +281,7 @@ server <- function(input, output, session) {
       } # end of the if about turn 37
     } # end of the if about the next button (value = 3)
     print(paste("game turn is ", values$game_state$turn))
+    values$game_stateS[[values$game_state$turn]] <- values$game_state
   })
   
   observeEvent(input$pixel_cards, {
@@ -430,6 +437,11 @@ server <- function(input, output, session) {
   
   output$end_game <- renderText({
     print(glue("{values$endgame}"))
+  })
+  
+  output$recap_game <- renderPlot({
+    if (values$endgame != "")
+    print(ScopAI:::PlotTheEvolutionOfAGame(values$game_stateS))
   })
   
 
