@@ -57,6 +57,21 @@ On peut vouloir apprendre les règles du jeu en apprenant des choix licites. Pou
 
 On peut aussi choisir de contraindre les choix aux mouvements autorisés.
 
+## Apprentissage sur plusieurs mouvements
+
+On souhaite optimiser des décisions en fonction:
+- de leur utilité immédiate, c'est ce que fait le joueur optimisé
+- de leur utilité pour le score de fin de manche
+- de leur utilité pour la victoire en fin de partie
+
+La deuxième option est intéressante, parce qu'on ne veut pas maximiser les gains immédiats mais marquer le maximum de points, et parce que certaines décisions peuvent être idiotes sur un tour mais favoriser une scopa au tour suivant par exemple.
+
+La troisième option est intéressante parce qu'on peut vouloir jouer avec différents niveaux de risque selon la proximité de la fin de partie.
+
+Méthodes pour l'apprentissage sur plusieurs coups:
+- eligibility traces  
+- q-learning  
+- SARSA
 
 # Distribution des scores
 
@@ -277,3 +292,11 @@ e) méthode du joueur omniscient : c'est de la triche, mais si on veut créer un
 -> le calcul est beaucoup plus rapide, et il permet d'implémenter rapidement la stratégie numéro 3 qui calcule toutes les probas jusqu'au bout (et peut prendre en compte le last take).
 -> on peut même le faire un peut récursivement pour calculer les espérances de n, n+1, n+2... en considérant que other est aussi un omniscient qui calcule à plusieurs coups...
 
+# Idées 2 Mai 2021
+
+- est-ce qu'on est capables d'apprendre que si l'adversaire a laissé une somme égale à 7 après son premier coup, il n'a probablement pas de 7 en main et on peut laisser des sommes égales à 7 ensuite.
+- Est-ce qu'on peut mesurer l'aggressivité d'un joueur, sa tendance à la prise de risque
+- Est-ce qu'on peut obtenir des joueurs différents avec la même fonction à optimiser, typiquement des joueurs prenant des risques ou non.
+- Question connexe: est-ce qu'il est possible de diriger l'aggresssivité, c'est à dire de pousser un joueur à faire des gros scores en prenant des risques, ou un joueur qui prend le minumum de risques pour gagner.
+- Est-ce qu'on peut visualiser la plus ou moins grande prise de risque en fonction du type de joueur : .propension à laisser des sommes égales à 7 sur le plateau (et dans le détail propension à en créer en jouant, ou au contraire à les casser quand elles sont déjà là) et voir aussi si cette propension change une fois que la primiera est assurée...
+. propension à laisser une somme inférieure à 10 sur le plateau (stratégie anti-scopa) et prise en compte des scopa possibles ou non...
